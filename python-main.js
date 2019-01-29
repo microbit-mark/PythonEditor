@@ -340,6 +340,10 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        // If configured as experimental update editor background to indicate it
+        if(config.flags.experimental) {
+            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')"
+        }
         // Configure the zoom related buttons.
         $("#zoom-in").click(function (e) {
             e.stopPropagation();
@@ -494,7 +498,9 @@ function web_editor(config) {
         if(blockly.is(':visible')) {
             dirty = false;
             blockly.hide();
+            $('#editor').attr('title', '');
             editor.ACE.setReadOnly(false);
+            $("#command-snippet").removeClass('disabled');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
               doSnippets();
@@ -506,10 +512,12 @@ function web_editor(config) {
                 }
             }
             editor.ACE.setReadOnly(true);
+            $('#editor').attr('title', 'The code editor is read-only when blocks are active.');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
               alert(config.translate.alerts.snippets);
             });
+            $("#command-snippet").addClass('disabled');
             blockly.show();
             blockly.css('width', '33%');
             blockly.css('height', '100%');
@@ -531,8 +539,15 @@ function web_editor(config) {
                     var code = Blockly.Python.workspaceToCode(workspace);
                     EDITOR.setCode(code);
                 }
+                // Resize blockly
+                var element = document.getElementById('blockly');
+                new ResizeSensor(element, function() {
+                    Blockly.svgResize(workspace);
+                });
                 workspace.addChangeListener(myUpdateFunction);
             }
+            // Set editor to current state of blocks.
+            EDITOR.setCode(Blockly.Python.workspaceToCode(workspace));
         };
     }
 
