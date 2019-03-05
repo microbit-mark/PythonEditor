@@ -13,6 +13,15 @@ DEST="${SRC}/dist/"
 rm -rf "${DEST}"
 mkdir "${DEST}"
 
+for submodule in blockly microbit_blocks; do
+  if [ ! -f "${SRC}/$submodule/.git" ]; then
+    echo "The $submodule submodule is not initialised!"
+    echo "Initialising all submodules..."
+    git submodule update --init --recursive
+    echo "Done initialising submodules."
+  fi
+done
+
 for file in editor.html help.html python-main.js; do
   cp "${SRC}/$file" "${DEST}"
 done
@@ -20,3 +29,5 @@ done
 for dir in ace blockly microbit_blocks static base64-js lzma; do
   cp -r "${SRC}/$dir" "${DEST}"
 done
+
+echo "Done building."
