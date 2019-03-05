@@ -8,7 +8,7 @@ SCRIPTPATH="$(pwd)"
 popd > /dev/null
 
 SRC="${SCRIPTPATH}/../"
-DEST="${SRC}/dist/"
+DEST="${SRC}dist/"
 
 rm -rf "${DEST}"
 mkdir "${DEST}"
@@ -18,11 +18,19 @@ for submodule in blockly microbit_blocks; do
     echo "The $submodule submodule is not initialised!"
     echo "Initialising all submodules..."
     git submodule update --init --recursive
-    echo "Done initialising submodules."
+    echo "...done"
   fi
 done
 
-for file in editor.html help.html python-main.js; do
+echo "Copying files to the ${DEST} folder..."
+
+# Manually select HTMl files needed, excluding things like tests.html
+for file in editor.html help.html; do
+  cp "${SRC}/$file" "${DEST}"
+done
+
+# Assume all JavaScript files in the root directory are needed
+for file in *.js; do
   cp "${SRC}/$file" "${DEST}"
 done
 
@@ -30,4 +38,4 @@ for dir in ace blockly microbit_blocks static base64-js lzma; do
   cp -r "${SRC}/$dir" "${DEST}"
 done
 
-echo "Done building."
+echo "...done"
