@@ -1,0 +1,17 @@
+/* line 16, ../sass/vex-theme-wireframe.sass */
+.vex.vex-theme-wireframe .vex-content {
+  border-color: #febf2e;
+}
+.vex.vex-theme-wireframe .vex-content i,
+.vex.vex-theme-wireframe .vex-content th,
+.vex.vex-theme-wireframe .vex-content strong {
+  color: #3758ce;
+}
+/* line 32, ../sass/vex-theme-wireframe.sass */
+.vex.vex-theme-wireframe .vex-close {
+  color: #febf2e;
+}
+/* line 38, ../sass/vex-theme-wireframe.sass */
+.vex.vex-theme-wireframe .vex-close:before {
+  color: #3758ce;
+}
