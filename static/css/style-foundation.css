@@ -20,7 +20,8 @@
   color: #3758ce;
 }
 
-.roundsymbol {
+.roundsymbol, .roundsymbol-sm {
+  border-color: #febf2e;
   color: #3758ce;
 }
 
