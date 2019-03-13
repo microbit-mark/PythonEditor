@@ -72,10 +72,18 @@ Nicholas and Damien.
     </head>
     <body>
         <script type="application/javascript">
-        <!-- VERSION INFORMATION -->
-        EDITOR_VERSION = "1.1.2";
-        UPY_VERSION = "1.0.1";
+            if (navigator.appVersion.indexOf("MSIE 9") !== -1 || navigator.appVersion.indexOf("MSIE 8") !== -1 || navigator.appVersion.indexOf("MSIE 7") !== -1)
+            {
+                document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 10 or greater.</a>');
+                document.execCommand('Stop');
+            }
         </script>
+        <script type="application/javascript">
+            // VERSION INFORMATION
+            EDITOR_VERSION = "1.1.3";
+            UPY_VERSION = "1.0.1";
+        </script>
+
         <script id="load-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-upload"></i> <strong>{{ title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
@@ -109,7 +117,6 @@ Nicholas and Damien.
                 </tr>
                 {{/snippets}}
             </table>
-
         </script>
         <script id="share-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-share-alt"></i> <strong>{{ title }}</strong></h2>
@@ -195,8 +202,8 @@ Nicholas and Damien.
                 </a>
                 <div class="helpsupport_container">
                     <div class="helpsupport_lhs">
-                        <div class="helpsupport"><a title="View the documentation for MicroPython" href="https://microbit-micropython.readthedocs.io/en/latest/" target="_blank">Documentation</a></div>
-                        <div class="helpsupport"><a title="Open help for this editor in a new tab" href="help.html" target="_blank">Help</a></div>
+                        <div class="helpsupport"><a id="docs-link" title="View the documentation for MicroPython" href="https://microbit-micropython.readthedocs.io/" target="_blank">Documentation</a></div>
+                        <div class="helpsupport"><a id="help-link" title="Open help for this editor in a new tab" href="help.html" target="_blank" >Help</a></div>
                         <div class="helpsupport"><a title="Get support for your micro:bit in a new tab" href="https://support.microbit.org/support/home" target="_blank">Support</a></div>
                     </div>
                     <div class="helpsupport_rhs">
@@ -256,6 +263,8 @@ Nicholas and Damien.
         <script src="static/js/encoding.js" type="application/javascript"></script>
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
+        <script src="static/js/polyfill.min.js" type="application/javascript"></script>
+        <script src="static/js/intel-hex.browser.js" type="application/javascript"></script>
         <script src="blockly/blockly_compressed.js"></script>
         <script src="blockly/blocks_compressed.js"></script>
         <script src="blockly/python_compressed.js"></script>
@@ -273,11 +282,13 @@ Nicholas and Damien.
         <script src="microbit_blocks/generators/speech.js"></script>
         <script src="microbit_blocks/generators/python.js"></script>
         <script src="blockly/msg/js/en.js"></script>
-	    <script src="microbit_blocks/messages/en/messages.js"></script>
+        <script src="microbit_blocks/messages/en/messages.js"></script>
         <script src="static/js/ResizeSensor.js"></script>
         <script src="static/js/ElementQueries.js"></script>
 	    <script src="lzma/lzma_worker.js"></script>
 	    <script src="base64-js/base64.js"></script>
+        <script src="hexlify.js"
+            type="application/javascript"></script>
         <script src="python-main.js"
             type="application/javascript"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
@@ -320,7 +331,8 @@ web_editor({
       'alerts': {
         'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
         'save': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
-        'length': 'Oops! Your script is to long given the limited memory on the device.',
+        'length': 'Oops! Your script is too long given the limited memory on the device.',
+        'unrecognised_hex': "Sorry, we couldn't recognise this file",
         'snippets': 'Snippets are disabled when blockly is enabled.'
       },
       'confirms': {
