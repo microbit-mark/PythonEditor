@@ -6,6 +6,19 @@ everything does.)
 */
 
 /*
+Lazy load JS script files.
+*/
+function script(url) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = false;
+    s.defer = true;
+    s.src = url;
+    var x = document.getElementsByTagName('head')[0];
+    x.appendChild(s);
+}
+
+/*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
@@ -110,6 +123,10 @@ function pythonEditor(id) {
 
     return editor;
 }
+/* Attach to the global object if running in node */
+if (typeof module !== 'undefined' && module.exports) {
+    global.pythonEditor = pythonEditor;
+}
 
 /*
 The following code contains the various functions that connect the behaviour of
@@ -126,24 +143,14 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
-    // Sets the description associated with the code displayed in the UI.
-    function setDescription(x) {
-        $("#script-description").text(x);
-    }
-
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
-        $("#script-name").text(x);
-    }
-
-    // Gets the description associated with the code displayed in the UI.
-    function getDescription() {
-        return $("#script-description").text();
+        $("#script-name").val(x);
     }
 
     // Gets the name associated with the code displayed in the UI.
     function getName() {
-        return $("#script-name").text();
+        return $("#script-name").val();
     }
 
     // Get the font size of the text currently displayed in the editor.
@@ -199,6 +206,25 @@ function web_editor(config) {
     function setupFeatureFlags() {
         if(config.flags.blocks) {
             $("#command-blockly").removeClass('hidden');
+            // Add includes 
+            script('blockly/blockly_compressed.js');
+            script('blockly/blocks_compressed.js');
+            script('blockly/python_compressed.js');
+            script('microbit_blocks/blocks/microbit.js');
+            script('microbit_blocks/generators/accelerometer.js');
+            script('microbit_blocks/generators/buttons.js');
+            script('microbit_blocks/generators/compass.js');
+            script('microbit_blocks/generators/display.js');
+            script('microbit_blocks/generators/image.js');
+            script('microbit_blocks/generators/microbit.js');
+            script('microbit_blocks/generators/music.js');
+            script('microbit_blocks/generators/neopixel.js');
+            script('microbit_blocks/generators/pins.js');
+            script('microbit_blocks/generators/radio.js');
+            script('microbit_blocks/generators/speech.js');
+            script('microbit_blocks/generators/python.js');
+            script('blockly/msg/js/en.js');
+            script('microbit_blocks/messages/en/messages.js');
         }
         if(config.flags.snippets) {
             $("#command-snippet").removeClass('hidden');
@@ -240,21 +266,17 @@ function web_editor(config) {
             $('#button-decrypt-link').click(function() {
                 var password = $('#passphrase').val();
                 setName(EDITOR.decrypt(password, message.n));
-                setDescription(EDITOR.decrypt(password, message.c));
                 EDITOR.setCode(EDITOR.decrypt(password, message.s));
                 vex.close();
                 EDITOR.focus();
             });
         } else if(migration != null){
             setName(migration.meta.name);
-            setDescription(migration.meta.comment);
             EDITOR.setCode(migration.source);
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
             setName("microbit");
-            // If there's no description, default to something sensible.
-            setDescription("A MicroPython script");
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
@@ -392,7 +414,6 @@ function web_editor(config) {
                         var reader = new FileReader();
                         if (ext == 'py') {
                             setName(f.name.replace('.py', ''));
-                            setDescription(config.translate.drop.python);
                             reader.onload = function(e) {
                                 EDITOR.setCode(e.target.result);
                             };
@@ -400,7 +421,6 @@ function web_editor(config) {
                             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
                         } else if (ext == 'hex') {
                             setName(f.name.replace('.hex', ''));
-                            setDescription(config.translate.drop.hex);
                             reader.onload = function(e) {
                                 var code = '';
                                 var showAlert = false;
@@ -438,7 +458,7 @@ function web_editor(config) {
             dirty = false;
             blockly.hide();
             $('#editor').attr('title', '');
-            editor.ACE.setReadOnly(false);
+            EDITOR.ACE.setReadOnly(false);
             $("#command-snippet").removeClass('disabled');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
@@ -450,7 +470,7 @@ function web_editor(config) {
                     return;
                 }
             }
-            editor.ACE.setReadOnly(true);
+            EDITOR.ACE.setReadOnly(true);
             $('#editor').attr('title', 'The code editor is read-only when blocks are active.');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
@@ -539,8 +559,6 @@ function web_editor(config) {
             var qs_array = [];
             // Name
             qs_array.push('n=' + EDITOR.encrypt(password, getName()));
-            // Comment
-            qs_array.push('c=' + EDITOR.encrypt(password, getDescription()));
             // Source
             qs_array.push('s=' + EDITOR.encrypt(password, EDITOR.getCode()));
             // Hint
@@ -576,7 +594,6 @@ function web_editor(config) {
         var reader = new FileReader();
         if (ext == 'py') {
             setName(file.name.replace('.py', ''));
-            setDescription(config.translate.drop.python);
             reader.onload = function(e) {
                 EDITOR.setCode(e.target.result);
             };
@@ -584,7 +601,6 @@ function web_editor(config) {
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         } else if (ext == 'hex') {
             setName(file.name.replace('.hex', ''));
-            setDescription(config.translate.drop.hex);
             reader.onload = function(e) {
                 var code = '';
                 var showAlert = false;
@@ -662,39 +678,9 @@ function web_editor(config) {
         return project;
     }
 
-    // Checks if this is the latest version of the editor. If not display an
-    // appropriate message.
-    function checkVersion(qs) {
-        $.getJSON('../manifest.json').done(function(data) {
-            if(data.latest === VERSION) {
-                // Already at the latest version, so ignore.
-                return;
-            } else {
-                // This isn't the latest version. Display the message bar with
-                // helpful information.
-                if(qs.force) {
-                    // The inbound link tells us to force use of this editor.
-                    // DO SOMETHING APPROPRIATE HERE? IF ANYTHING?
-                }
-                var template = $('#messagebar-template').html();
-                Mustache.parse(template);
-                var context = config.translate.messagebar;
-                var messagebar = $('#messagebar');
-                messagebar.html(Mustache.render(template, context));
-                messagebar.show();
-                $('#messagebar-link').attr('href',
-                                           window.location.href.replace(VERSION, data.latest));
-                $('#messagebar-close').on('click', function(e) {
-                    $('#messagebar').hide();
-                });
-            }
-        });
-    }
-
     var qs = get_qs_context();
     var migration = get_migration();
     setupFeatureFlags();
     setupEditor(qs, migration);
-    checkVersion(qs);
     setupButtons();
 }

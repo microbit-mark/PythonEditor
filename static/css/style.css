@@ -113,14 +113,6 @@ body, input {
   border-radius: 0.5rem;
 }
 
-#script-description {
-  display: none; /* TODO: FIXME: remove this field */
-  color: #336699;
-  padding-bottom: 0.2rem;
-  overflow: hidden;
-  max-height: 22px;
-}
-
 #script-icons > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
@@ -359,6 +351,10 @@ a.command:hover {
     font-weight: bold;
   }
 
+  #script-box > label {
+    font-size: 0.8rem;
+  }
+
   .blocklyTreeRow {
     padding-right: .3em !important;
   }
@@ -419,18 +415,6 @@ a.command:hover {
 .blocklySvg {
     background-image: url('../img/experimental.png');
     background-repeat: repeat;
-}
-
-#messagebar {
-    display: none;
-    background-color: #ffcc33;
-    padding: 0.75em;
-    font-family: "Segoe UI Light", "Segoe UI", "Segoe WP Light", "Segoe WP", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", sans-serif;
-}
-
-#messagebar a, #messagebar a.visited {
-    color: #336699;
-    font-weight: bold;
 }
 
 .load-form {

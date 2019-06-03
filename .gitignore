@@ -10,5 +10,9 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 *.swp
+
+# Project
 dist/*
-node_modules/*
+
+# Node
+node_modules/
