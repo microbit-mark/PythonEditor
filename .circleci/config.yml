@@ -1,36 +1,45 @@
 version: 2
+
+_defaults: &defaults
+  working_directory: ~/microbit-foundation/python-editor
+  parallelism: 1
+  shell: /bin/bash --login
+  docker:
+  - image: python:3.6-stretch
+
 jobs: 
   review:
-    working_directory: ~/microbit-foundation/python-editor
-    parallelism: 1
-    shell: /bin/bash --login
-    docker:
-    - image: python:3.6-jessie
+    <<: *defaults
     steps:
     - checkout
     - run: git submodule sync
     - run: git submodule update --init
     - run: apt-get update
-    - run: apt-get install jq
+    - run: apt-get install -y jq
     - run: pip install awscli
+    # builds to ./dist
     - run: ./bin/build
+    # deploys to a review bucket
     - run: ./bin/deploy ${CIRCLE_BRANCH}-review
+
   release:
-    working_directory: ~/microbit-foundation/python-editor
-    parallelism: 1
-    shell: /bin/bash --login
-    docker:
-    - image: python:3.6-jessie
+    <<: *defaults
     steps:
     - checkout
     - run: git submodule sync
     - run: git submodule update --init
     - run: apt-get update
-    - run: apt-get install jq
+    - run: apt-get install -y jq
     - run: pip install awscli
+    # clean up any old buckets
+    - run: ./bin/cleanup
+    # builds to ./dist
     - run: ./bin/build
+    # deploys to named bucket
     - run: ./bin/deploy $(cat VERSION)
-
+    # creates cloudfront distribution
+    # https://python-editor-{VERSION}.microbit.org/
+    - run: ./bin/publish_version $(cat VERSION)
 
 workflows:
   version: 2
@@ -41,7 +50,7 @@ workflows:
             branches:
               only: /.*/
             tags:
-              ignore: /^v.*/
+              ignore: /.*/
       - release:
           filters:
             branches:

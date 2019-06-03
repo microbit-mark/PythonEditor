@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+
+# Select all existing branches and create regex filter that matches the review branches we want to keep.
+echo "Fetching existing branches:"
+BRANCHES=$(git ls-remote --heads -q | cut -f3 -d/)
+echo "$BRANCHES"
+FILTER=$(echo -n "$BRANCHES" | while read branch; do echo "^python-editor-$branch-review.microbit.org$"; done)
+FILTER=$(echo -n "$FILTER" | tr '\n' '|')
+
+echo
+echo "Regex for review buckets to keep:"
+echo "$FILTER"
+
+echo
+echo "Removing other review buckets:"
+# Filter S3 buckets to remove live branches
+aws s3api list-buckets --query "Buckets[].Name" \
+        | jq -r --arg FILTER "$FILTER" '.[] | select(match("python-editor-.*-review.*")) | select(test($FILTER) | not)' \
+        | while read bucket; do echo $bucket; aws s3 rb s3://$bucket --force; done
+

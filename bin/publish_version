@@ -11,7 +11,7 @@ aws configure set preview.cloudfront true
 
 CLOUDFRONT_POLICY=$(mktemp)
 sed -e "s/{{NORMALISED_VERSION}}/${NORMALISED_VERSION}/g" cloudfront.tmpl.json > "${CLOUDFRONT_POLICY}"
-sed -i '' "s/{{CALLER_REFERENCE}}/$(date +%s)/" ${CLOUDFRONT_POLICY}
+sed -i.bak "s/{{CALLER_REFERENCE}}/$(date +%s)/" ${CLOUDFRONT_POLICY}
 
 echo "Creating cloudfront distribution..."
 DOMAIN_NAME=$(aws cloudfront create-distribution --distribution-config "file://${CLOUDFRONT_POLICY}" | jq '.Distribution.DomainName' | sed -e 's/\"//g')
@@ -19,7 +19,7 @@ echo "...done"
 
 ROUTE_53_POLICY=$(mktemp)
 sed -e "s/{{NORMALISED_VERSION}}/${NORMALISED_VERSION}/g" route53.tmpl.json > "${ROUTE_53_POLICY}"
-sed -i '' "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/" ${ROUTE_53_POLICY}
+sed -i.bak "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/" ${ROUTE_53_POLICY}
 
 : ${ROUTE_53_ZONE_ID:=Z1RHL9V3FF5VUG} # ID for microbit.org. hosted zone
 echo "Creating subdomain..."
