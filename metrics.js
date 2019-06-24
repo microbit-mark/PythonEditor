@@ -89,6 +89,13 @@ $(".action").click(function (e) {
     var slug = "/action/" + $(e.target).closest(".action")[0].id;
     slug = slug.replace("command-", "");
 
+    if (slug.includes("_save")) {
+      slug = "/action/file-save";
+    }
+    else if (slug.includes("_remove")) {
+      slug = "/action/file-remove";
+    }
+
     // Note - The save action has been renamed to save-hex in the combined save/load button
     switch(slug) {
       case "/action/download":
