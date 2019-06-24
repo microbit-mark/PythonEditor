@@ -28,8 +28,8 @@ function trackFiles() {
       files = micropythonFs.ls().length;
     }
     catch {
-      // If the filesystem is not present
-      sendMetric("/files/-1");
+      // If the filesystem is not present assume one file (main.py)
+      sendMetric("/files/1");
       return;
     }
 
