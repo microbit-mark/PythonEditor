@@ -20,7 +20,7 @@ if ! aws s3api head-bucket --bucket "${BUCKET}" > /dev/null 2>&1; then
   sed -e "s/{{BUCKET_NAME}}/${BUCKET}/g" s3_website.tmpl.json > "$S3_WEBSITE_POLICY"
 
   aws s3api create-bucket --bucket "${BUCKET}" --region eu-west-1 --create-bucket-configuration LocationConstraint=eu-west-1
-  aws s3 website "s3://${BUCKET}/" --index-document index.html --error-document error.html
+  aws s3 website "s3://${BUCKET}/" --index-document editor.html --error-document error.html
   aws s3api put-bucket-policy --bucket "${BUCKET}" --policy "file://${S3_WEBSITE_POLICY}"
   echo "...done"
 fi
@@ -39,3 +39,6 @@ if [[ ! -z ${CF_DISTRIBUTION_ID} ]]; then
   echo "...done"
 fi
 echo "...done"
+
+echo " "
+echo "Deployed at ${BUCKET}.s3-website-eu-west-1.amazonaws.com"
