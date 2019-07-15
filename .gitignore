@@ -11,5 +11,8 @@ Desktop.ini
 $RECYCLE.BIN/
 *.swp
 
+# Project
+dist/*
+
 # Node
 node_modules/

@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+set -u
+set -o pipefail
+VERSION=$1
+NORMALISED_VERSION=$(echo ${VERSION} | sed -e "s/\./-/g" | sed -e "s/_/-/g")
+
+pushd "$(dirname $0)" > /dev/null
+SCRIPTPATH="$(pwd)"
+popd > /dev/null
+
+PROJECTPATH="${SCRIPTPATH}/../"
+SRC="${PROJECTPATH}/dist"
+
+BUCKET="python-editor-${NORMALISED_VERSION}.microbit.org"
+
+if ! aws s3api head-bucket --bucket "${BUCKET}" > /dev/null 2>&1; then
+  echo "Creating bucket..."
+  S3_WEBSITE_POLICY=$(mktemp)
+  sed -e "s/{{BUCKET_NAME}}/${BUCKET}/g" s3_website.tmpl.json > "$S3_WEBSITE_POLICY"
+
+  aws s3api create-bucket --bucket "${BUCKET}" --region eu-west-1 --create-bucket-configuration LocationConstraint=eu-west-1
+  aws s3 website "s3://${BUCKET}/" --index-document editor.html --error-document error.html
+  aws s3api put-bucket-policy --bucket "${BUCKET}" --policy "file://${S3_WEBSITE_POLICY}"
+  echo "...done"
+fi
+
+echo "Uploading ./dist to bucket..."
+aws s3 sync "${SRC}" "s3://${BUCKET}" --delete
+echo "...done"
+
+echo "Configuring CloudFront..."
+aws configure set preview.cloudfront true
+
+CF_DISTRIBUTION_ID=$(aws cloudfront list-distributions | jq ".DistributionList.Items[] | select(.Origins.Items[].Id == \"S3-${BUCKET}\") | .Id" | sed -e 's/\"//g')
+if [[ ! -z ${CF_DISTRIBUTION_ID} ]]; then
+  echo "Creating CloudFront invalidation..."
+  aws cloudfront create-invalidation --distribution-id "${CF_DISTRIBUTION_ID}" --paths '/*'
+  echo "...done"
+fi
+echo "...done"
+
+echo " "
+echo "Deployed at ${BUCKET}.s3-website-eu-west-1.amazonaws.com"

@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+set -u
+set -o pipefail
+
+pushd "$(dirname $0)" > /dev/null
+SCRIPTPATH="$(pwd)"
+popd > /dev/null
+
+: ${GIT_REMOTE:=origin}
+PROJECTPATH="${SCRIPTPATH}/../"
+VERSION=$(cat "${PROJECTPATH}VERSION")
+BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+
+if ! grep -E '(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?' <<< ${VERSION} >/dev/null; then
+  echo "Contents of VERSION doesn't conform to semver, aborting"
+  exit 1
+fi
+
+git fetch ${GIT_REMOTE} --tags
+
+if git rev-parse -q --verify "refs/tags/${VERSION}" >/dev/null; then
+  echo "Tag ${VERSION} already exists, aborting"
+  exit 1
+else
+  echo "Tagging current rev ($(git rev-parse HEAD)) with ${VERSION}"
+  git tag ${VERSION}
+  git push ${GIT_REMOTE} ${VERSION}
+  echo "Tag ${VERSION} pushed"
+  git push ${GIT_REMOTE} ${BRANCH}
+  echo "Branch ${BRANCH} pushed"
+fi

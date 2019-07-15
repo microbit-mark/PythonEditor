@@ -1,0 +1,46 @@
+#script-description {
+  color: #3758ce;
+}
+
+#script-icons .status-icon {
+  border-color: #febf2e;
+  color: #3758ce;
+}
+
+#script-icons .holder {
+  color: #3758ce;
+}
+
+#toolbox {
+  background-image: url("../img/toolbox_bg.png");
+  background-repeat: repeat-x;
+}
+
+.roundbutton {
+  color: #3758ce;
+}
+
+.roundsymbol, .roundsymbol-sm {
+  border-color: #febf2e;
+  color: #3758ce;
+}
+
+.roundlabel {
+  color: #3758ce;
+}
+
+.snippet-selection:hover {
+  background: #febf2e;
+}
+
+#messagebar {
+  background-color: #febf2e;
+}
+
+#messagebar a, #messagebar a.visited {
+  color: #3758ce;
+}
+
+#load-alt a, #load-alt a.visited {
+  color: #3758ce;
+}

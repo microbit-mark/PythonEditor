@@ -1,0 +1,60 @@
+version: 2
+
+_defaults: &defaults
+  working_directory: ~/microbit-foundation/python-editor
+  parallelism: 1
+  shell: /bin/bash --login
+  docker:
+  - image: python:3.6-stretch
+
+jobs: 
+  review:
+    <<: *defaults
+    steps:
+    - checkout
+    - run: git submodule sync
+    - run: git submodule update --init
+    - run: apt-get update
+    - run: apt-get install -y jq
+    - run: pip install awscli
+    # builds to ./dist
+    - run: ./bin/build
+    # deploys to a review bucket
+    - run: ./bin/deploy ${CIRCLE_BRANCH}-review
+
+  release:
+    <<: *defaults
+    steps:
+    - checkout
+    - run: git submodule sync
+    - run: git submodule update --init
+    - run: apt-get update
+    - run: apt-get install -y jq
+    - run: pip install awscli
+    # clean up any old buckets
+    - run: ./bin/cleanup
+    # builds to ./dist
+    - run: ./bin/build
+    # deploys to named bucket
+    - run: ./bin/deploy $(cat VERSION)
+    # creates cloudfront distribution
+    # https://python-editor-{VERSION}.microbit.org/
+    - run: ./bin/publish_version $(cat VERSION)
+
+workflows:
+  version: 2
+  build_deploy:
+    jobs:
+      - review:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              ignore: /.*/
+      - release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/
+

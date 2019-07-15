@@ -1,0 +1,99 @@
+{
+    "CallerReference": "{{CALLER_REFERENCE}}",
+    "Aliases": {
+        "Quantity": 1,
+        "Items": [
+            "python-editor-{{NORMALISED_VERSION}}.microbit.org"
+        ]
+    },
+    "DefaultRootObject": "editor.html",
+    "Origins": {
+        "Quantity": 1,
+        "Items": [
+            {
+                "Id": "S3-python-editor-{{NORMALISED_VERSION}}.microbit.org",
+                "DomainName": "python-editor-{{NORMALISED_VERSION}}.microbit.org.s3.amazonaws.com",
+                "OriginPath": "",
+                "CustomHeaders": {
+                    "Quantity": 0
+                },
+                "S3OriginConfig": {
+                    "OriginAccessIdentity": ""
+                }
+            }
+        ]
+    },
+    "DefaultCacheBehavior": {
+        "TargetOriginId": "S3-python-editor-{{NORMALISED_VERSION}}.microbit.org",
+        "ForwardedValues": {
+            "QueryString": true,
+            "Cookies": {
+                "Forward": "none"
+            },
+            "Headers": {
+                "Quantity": 0
+            },
+            "QueryStringCacheKeys": {
+                "Quantity": 0
+            }
+        },
+        "TrustedSigners": {
+            "Enabled": false,
+            "Quantity": 0
+        },
+        "ViewerProtocolPolicy": "allow-all",
+        "MinTTL": 0,
+        "AllowedMethods": {
+            "Quantity": 2,
+            "Items": [
+                "HEAD",
+                "GET"
+            ],
+            "CachedMethods": {
+                "Quantity": 2,
+                "Items": [
+                    "HEAD",
+                    "GET"
+                ]
+            }
+        },
+        "SmoothStreaming": false,
+        "DefaultTTL": 86400,
+        "MaxTTL": 31536000,
+        "Compress": false,
+        "LambdaFunctionAssociations": {
+            "Quantity": 0
+        }
+    },
+    "CacheBehaviors": {
+        "Quantity": 0
+    },
+    "CustomErrorResponses": {
+        "Quantity": 0
+    },
+    "Comment": "",
+    "Logging": {
+        "Enabled": false,
+        "IncludeCookies": false,
+        "Bucket": "",
+        "Prefix": ""
+    },
+    "PriceClass": "PriceClass_All",
+    "Enabled": true,
+    "ViewerCertificate": {
+        "ACMCertificateArn": "arn:aws:acm:us-east-1:700731169244:certificate/4eb31f42-0ae5-405a-b71d-c753201a6b3d",
+        "SSLSupportMethod": "sni-only",
+        "MinimumProtocolVersion": "TLSv1",
+        "Certificate": "arn:aws:acm:us-east-1:700731169244:certificate/4eb31f42-0ae5-405a-b71d-c753201a6b3d",
+        "CertificateSource": "acm"
+    },
+    "Restrictions": {
+        "GeoRestriction": {
+            "RestrictionType": "none",
+            "Quantity": 0
+        }
+    },
+    "WebACLId": "",
+    "HttpVersion": "http2",
+    "IsIPV6Enabled": true
+}

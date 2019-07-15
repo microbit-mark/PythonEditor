@@ -1,0 +1,18 @@
+{
+  "Comment": "python-editor-{{NORMALISED_VERSION}}",
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "python-editor-{{NORMALISED_VERSION}}.microbit.org.",
+        "Type": "CNAME",
+        "TTL": 3600,
+        "ResourceRecords": [
+          {
+            "Value": "{{DOMAIN_NAME}}"
+          }
+        ]
+      }
+    }
+  ]
+}
