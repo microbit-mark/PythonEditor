@@ -44,3 +44,10 @@
 #load-alt a, #load-alt a.visited {
   color: #3758ce;
 }
+
+.menu-switch-slider:before {
+  background-color: #febf2e;
+}
+input:checked + .menu-switch-slider {
+  background-color: #3758ce;
+}
