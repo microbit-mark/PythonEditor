@@ -41,8 +41,15 @@
   color: #3758ce;
 }
 
-#load-alt a, #load-alt a.visited {
+.load-drag-target a, .load-drag-target a.visited{
   color: #3758ce;
+}
+
+.save-button:hover {
+  background-color: #3758ce;
+}
+.save-button.show {
+  background: none;
 }
 
 .menu-switch-slider:before {
