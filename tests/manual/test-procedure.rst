@@ -299,6 +299,48 @@ Test Case: Zoom changes the Text Editor font size
 - [ ] Confirm the font in the Text Editor has been decreased.
 
 
+Test Case: Metrics are working
+''''''''''''''''''''''''''''''
+Check that the following actions send a metric ping:
+- [ ] When the page has been loaded
+- [ ] Click Download button
+    - One ping for clicking the button
+    - One ping indicating the script size in number of lines range
+- [ ] Click Save button
+- [ ] Click Snippets button
+- [ ] Click on all of the individual snippets
+- [ ] Click Help button
+- [ ] A different ping per click in each of the help menu entries
+- [ ] Click Zoom-in button
+- [ ] Click Zoom-out button
+- [ ] Click Load button
+- [ ] In the Load modal drag&drop a file into the grey area
+    - The ping identifies the file type, so repeat:
+        - Once for a Python file
+        - Once for a Hex file
+- [ ] In the Load modal add a file via file dialog
+    - The ping identifies the file type, so repeat:
+        - Once for a Python file
+        - Once for a Hex file
+- [ ] Drag&drop a file in the code editor area
+    - The ping identifies the file type, so repeat:
+        - Once for a Python file
+        - Once for a Hex file
+- [ ] Edit the Script Name
+
+v2-beta specific:
+- [ ] Click WebuSB Connect button
+- [ ] Click WebuSB Disconnect button
+- [ ] Click WebuSB Flash button
+- [ ] Click WebuSB Serial button
+- [ ] Click Options button
+- [ ] A different ping per click in each of the options menu entries
+- [ ] Click Files button
+- [ ] In the files modal add a file to fs via file dialog
+- [ ] In the files modal removing a file from the fs 
+- [ ] Clicking the Download button also pins with the number of files in fs
+
+
 Test results
 ------------
 
