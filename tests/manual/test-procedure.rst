@@ -302,43 +302,48 @@ Test Case: Zoom changes the Text Editor font size
 Test Case: Metrics are working
 ''''''''''''''''''''''''''''''
 Check that the following actions send a metric ping:
+
 - [ ] When the page has been loaded
 - [ ] Click Download button
     - One ping for clicking the button
     - One ping indicating the script size in number of lines range
-- [ ] Click Save button
+    - One ping indicating the number of files in the file system
+- [ ] Click WebUSB Connect button
+- [ ] Click WebUSB Flash button
+- [ ] Click WebUSB Serial button
+- [ ] Click WebUSB Disconnect button
+- [ ] Click Load/Save button
+- [ ] In the Load/Save modal, drag&drop a file into the grey area
+    - The ping identifies the file type, so repeat:
+        - Once for a Python file
+        - Once for a Hex file
+- [ ] In the Load/Save modal, add a file via file dialog
+    - The ping identifies the file type, so repeat:
+        - Once for a Python file
+        - Once for a Hex file
+- [ ] In the Load/Save modal, click the "Download Hex" button
+    - One ping for clicking the button
+    - One ping indicating the script size in number of lines range
+    - One ping indicating the number of files in the file system
+- [ ] In the Load/Save modal, click on "Add file" button 
+- [ ] In the Load/Save modal, click on the download button from a file in the fs
+- [ ] In the Load/Save modal, click on the delete button from a file in the fs
 - [ ] Click Snippets button
-- [ ] Click on all of the individual snippets
+- [ ] In the Snippets modal, click on each individual snippets
+    - Each snippet should have it's own ping
+- [ ] Click Options button
+- [ ] In the Options menu, click on each of the menu entries
+    - Each entry in the Options menu should have it's own ping
 - [ ] Click Help button
-- [ ] A different ping per click in each of the help menu entries
+- [ ] In the Help menu, click on each of the menu entries
+    - Each entry in the Help menu should have it's own ping
 - [ ] Click Zoom-in button
 - [ ] Click Zoom-out button
-- [ ] Click Load button
-- [ ] In the Load modal drag&drop a file into the grey area
-    - The ping identifies the file type, so repeat:
-        - Once for a Python file
-        - Once for a Hex file
-- [ ] In the Load modal add a file via file dialog
-    - The ping identifies the file type, so repeat:
-        - Once for a Python file
-        - Once for a Hex file
 - [ ] Drag&drop a file in the code editor area
     - The ping identifies the file type, so repeat:
         - Once for a Python file
         - Once for a Hex file
 - [ ] Edit the Script Name
-
-v2-beta specific:
-- [ ] Click WebuSB Connect button
-- [ ] Click WebuSB Disconnect button
-- [ ] Click WebuSB Flash button
-- [ ] Click WebuSB Serial button
-- [ ] Click Options button
-- [ ] A different ping per click in each of the options menu entries
-- [ ] Click Files button
-- [ ] In the files modal add a file to fs via file dialog
-- [ ] In the files modal removing a file from the fs 
-- [ ] Clicking the Download button also pins with the number of files in fs
 
 
 Test results
