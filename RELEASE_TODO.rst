@@ -12,3 +12,8 @@ Checklist for Releases
 * Run the Manual Test Procedure
 * Update the CHANGES.rst file with an English description of all changes made.
 * Create a tagged release using GitHub.
+
+The steps above are only for the Upstream version of the Python Editor, for the
+steps needed in this repository (https://github.com/microbit-foundation/python-editor/)
+visit this wiki article:
+https://github.com/microbit-foundation/python-editor/wiki/Prepare-Release
