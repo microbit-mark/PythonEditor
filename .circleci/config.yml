@@ -7,7 +7,19 @@ _defaults: &defaults
   docker:
   - image: python:3.6-stretch
 
-jobs: 
+jobs:
+  test:
+    <<: *defaults
+    steps:
+    - checkout
+    - run: curl -sL https://deb.nodesource.com/setup_10.x | bash -
+    - run: apt-get install -y nodejs libx11-xcb1 libxtst6 libnss3-dev libasound2 libatk-bridge2.0-0 libgtk-3-0
+    - run: node --version
+    - run: cd tests && npm ci
+    - run:
+        name: Run tests
+        command: cd tests && npm run test
+
   review:
     <<: *defaults
     steps:
@@ -45,6 +57,12 @@ workflows:
   version: 2
   build_deploy:
     jobs:
+      - test:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              ignore: /.*/
       - review:
           filters:
             branches:

@@ -1,10 +1,12 @@
 function sendMetric(slug) {
+    slug = slug.replace(/,/g, '-');
     $.ajax({
-      type: "GET",
-      url: "https://metrics.microbit.org/pyeditor-" + EDITOR_VERSION + slug,
-      complete: function(res) {
-      }
-    })
+        type: "GET",
+        url: "https://metrics.microbit.org/pyeditor-" + EDITOR_VERSION + slug,
+        complete: function(res) {
+            // Do nothing
+        }
+    });
 }
 
 function trackLines() {
@@ -12,8 +14,8 @@ function trackLines() {
     var lines = EDITOR.getCode().split(/\r\n|\r|\n/).length;
 
     var bucket = range.filter(function(a) {
-      if (lines >= a[0] && lines <= a[1]) return a;
-    })
+        if (lines >= a[0] && lines <= a[1]) return a;
+    });
 
     var slug = "/lines/" + bucket[0].toString();
     sendMetric(slug);
@@ -24,31 +26,30 @@ function trackFiles() {
     var files;
 
     try {
-      // Will always be at least 1 due to main.py
-      files = micropythonFs.ls().length;
+        // Will always be at least 1 due to main.py
+        files = micropythonFs.ls().length;
     }
-    catch {
-      // If the filesystem is not present assume one file (main.py)
-      sendMetric("/files/1");
-      return;
+    catch(e) {
+        // If the filesystem is not present assume one file (main.py)
+        sendMetric("/files/1");
+        return;
     }
 
     if (files > 10) {
-      var bucket = range.filter(function(a) {
-        if (files >= a[0] && files <= a[1]) return a;
-      })
-
-      var slug = "/files/" + bucket[0].toString();
-      sendMetric(slug);
+        var bucket = range.filter(function(a) {
+            if (files >= a[0] && files <= a[1]) return a;
+        });
+        var slug = "/files/" + bucket[0].toString();
+        sendMetric(slug);
     }
     else {
-      var slug = "/files/" + files.toString();
-      sendMetric(slug);
+        var slug = "/files/" + files.toString();
+        sendMetric(slug);
     }
 }
 
 window.onload = function() {
-    sendMetric("/page-load/");
+    sendMetric("/page-load");
 };
 
 // Dropping into editor
