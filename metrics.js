@@ -1,3 +1,14 @@
+"use strict";
+
+// Used to track when a hex file is downloaded without code modifications
+var defaultScript = "";
+
+window.addEventListener("load", function() {
+  sendMetric("/page-load");
+  // Capture the default script loaded in the editor
+  defaultScript = EDITOR.getCode();
+});
+
 function sendMetric(slug) {
     slug = slug.replace(/,/g, '-');
     $.ajax({
@@ -10,14 +21,20 @@ function sendMetric(slug) {
 }
 
 function trackLines() {
-    var range = [[0, 20], [21, 30], [31, 50], [51, 100], [101, 200], [201, 1000], [1001, 1000000]];
-    var lines = EDITOR.getCode().split(/\r\n|\r|\n/).length;
+    var range = [[0, 20], [21, 50], [51, 100], [101, 200], [201, 500], [501, 1000], [1001, 1000000]];
+    var currentCode = EDITOR.getCode();
+    var slug = "/lines/";
 
-    var bucket = range.filter(function(a) {
-        if (lines >= a[0] && lines <= a[1]) return a;
-    });
+    if (currentCode == defaultScript) {
+      slug += "default-script";
+    } else {
+      var lines = currentCode.split(/\r\n|\r|\n/).length;
+      var bucket = range.filter(function(a) {
+          if (lines >= a[0] && lines <= a[1]) return a;
+      });
+      slug += bucket[0].toString();
+    }
 
-    var slug = "/lines/" + bucket[0].toString();
     sendMetric(slug);
 }
 
@@ -48,10 +65,6 @@ function trackFiles() {
     }
 }
 
-window.onload = function() {
-    sendMetric("/page-load");
-};
-
 // Records flashing times
 function trackflashingTime(){
   var flashTime = 0;
@@ -59,6 +72,7 @@ function trackflashingTime(){
   var flashing = setInterval(function(){
     if ($("#flashing-overlay-error").html() !== "") {
       // Error appeared
+      sendMetric("/flash-time/error");
       clearInterval(flashing);
     }
     flashTime += 100;
@@ -133,20 +147,17 @@ $(".action").click(function (e) {
     }
     // Note - The save action has been renamed to save-hex in the combined save/load button
     switch(slug) {
+      case "/action/flash":
+        trackflashingTime();
+        /* Intentional fall-through */
       case "/action/download":
       case "/action/save":
       case "/action/save-hex":
-        sendMetric(slug);
         trackLines();
         trackFiles();
-        break;
-      case "/action/flash":
-        sendMetric(slug);
-        trackLines();
-        trackFiles();
-        trackflashingTime();
-        break;
+        /* Intentional fall-through */
       default:
         sendMetric(slug);
+        break;
     }
 });

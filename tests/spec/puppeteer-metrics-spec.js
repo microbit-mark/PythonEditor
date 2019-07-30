@@ -113,4 +113,47 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
             expect(metrics[metric].requested).toBeTruthy();
         }
     });
+
+    it('Sends line range with default-script value when Download is clicked.', async function() {
+        let metrics = {
+            codeLines: {
+                slug: '/lines/default-script',
+                partial: false,
+                requested: false,
+            },
+        };
+        const page = await browser.newPage();
+        await addRequestIntercept(page, metrics);
+
+        await page.goto(editorURL);
+        await page.click('#command-download');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Sends line range when script is edited and Download is clicked.', async function() {
+        let metrics = {
+            codeLines: {
+                slug: '/lines/21-50',
+                partial: false,
+                requested: false,
+            },
+        };
+        const page = await browser.newPage();
+        await addRequestIntercept(page, metrics);
+
+        await page.goto(editorURL);
+        await page.evaluate('EDITOR.setCode("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n# code\\n")');
+        await page.click('#command-download');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
 });
