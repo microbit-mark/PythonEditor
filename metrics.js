@@ -52,6 +52,42 @@ window.onload = function() {
     sendMetric("/page-load");
 };
 
+//records flashing times
+function trackflashingTime(){
+  var flashTime = 0;
+  var timeBracket = "0-10";
+  var flashing = setInterval(function(){
+    if($("#flashing-overlay-container").css("display") !== "none" &&
+     $("#webusb-flashing-progress").css("display") === "none"){
+      //error appeared
+      clearInterval(flashing);
+    }
+    flashTime += 100;
+    if ($("#flashing-overlay-container").css("display") === "none"){
+      if(flashTime < 10000){
+        timeBracket = "0-10";
+      }
+      else if(flashTime <= 20000){
+        timeBracket = "10-20";
+      }
+      else if(flashTime <= 30000){
+        timeBracket = "20-30";
+      }
+      else if(flashTime <= 60000) {
+        timeBracket = "30-60";
+      }
+      else if(flashTime <= 120000){
+        timeBracket = "60-120";
+      }
+      else if(flashTime > 120000){
+        timeBracket = "120+";
+      }
+      sendMetric("/flash-time/" + timeBracket);
+      clearInterval(flashing);
+    }
+  },100);
+};
+
 // Dropping into editor
 $('#editor').on('drop', function (e) {
     var file = e.originalEvent.dataTransfer.files[0];
@@ -96,16 +132,20 @@ $(".action").click(function (e) {
     else if (slug.includes("_remove")) {
       slug = "/action/file-remove";
     }
-
     // Note - The save action has been renamed to save-hex in the combined save/load button
     switch(slug) {
       case "/action/download":
-      case "/action/flash":
       case "/action/save":
       case "/action/save-hex":
         sendMetric(slug);
         trackLines();
         trackFiles();
+        break;
+      case "/action/flash":
+        sendMetric(slug);
+        trackLines();
+        trackFiles();
+        trackflashingTime();
         break;
       default:
         sendMetric(slug);

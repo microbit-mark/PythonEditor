@@ -310,6 +310,10 @@ Check that the following actions send a metric ping:
     - One ping indicating the number of files in the file system
 - [ ] Click WebUSB Connect button
 - [ ] Click WebUSB Flash button
+    - One ping indicating flashing
+    - One ping indicating the script size in number of lines range
+    - One ping indicating the number of files in the file system
+    - One ping once the flashing ends indicating the time taken for flash in a seconds range.
 - [ ] Click WebUSB Serial button
 - [ ] Click WebUSB Disconnect button
 - [ ] Click Load/Save button
