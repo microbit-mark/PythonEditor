@@ -52,40 +52,39 @@ window.onload = function() {
     sendMetric("/page-load");
 };
 
-//records flashing times
+// Records flashing times
 function trackflashingTime(){
   var flashTime = 0;
-  var timeBracket = "0-10";
+  var timeBracket = "error";
   var flashing = setInterval(function(){
-    if($("#flashing-overlay-container").css("display") !== "none" &&
-     $("#webusb-flashing-progress").css("display") === "none"){
-      //error appeared
+    if ($("#flashing-overlay-error").html() !== "") {
+      // Error appeared
       clearInterval(flashing);
     }
     flashTime += 100;
-    if ($("#flashing-overlay-container").css("display") === "none"){
-      if(flashTime < 10000){
+    if ($("#flashing-overlay-container").css("display") === "none") {
+      if (flashTime < 10000) {
         timeBracket = "0-10";
       }
-      else if(flashTime <= 20000){
+      else if (flashTime <= 20000) {
         timeBracket = "10-20";
       }
-      else if(flashTime <= 30000){
+      else if (flashTime <= 30000) {
         timeBracket = "20-30";
       }
-      else if(flashTime <= 60000) {
+      else if (flashTime <= 60000) {
         timeBracket = "30-60";
       }
-      else if(flashTime <= 120000){
+      else if (flashTime <= 120000) {
         timeBracket = "60-120";
       }
-      else if(flashTime > 120000){
+      else {
         timeBracket = "120+";
       }
       sendMetric("/flash-time/" + timeBracket);
       clearInterval(flashing);
     }
-  },100);
+  }, 100);
 };
 
 // Dropping into editor
