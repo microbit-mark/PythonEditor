@@ -58,3 +58,16 @@
 input:checked + .menu-switch-slider {
   background-color: #3758ce;
 }
+
+#small-icons .status-icon {
+  color: #3758ce;
+}
+
+.save-button.hex {
+  background-color: #3758ce;
+}
+
+.save-button.hex:hover,
+.save-button.hex:hover i {
+  background-color: #febf2e;
+}
