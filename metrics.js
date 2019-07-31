@@ -139,10 +139,10 @@ $(".action").click(function (e) {
     var slug = "/action/" + $(e.target).closest(".action")[0].id;
     slug = slug.replace("command-", "");
 
-    if (slug.includes("_save")) {
+    if (slug.match(/_save/)) {
       slug = "/action/file-save";
     }
-    else if (slug.includes("_remove")) {
+    else if (slug.match(/_remove/)) {
       slug = "/action/file-remove";
     }
     // Note - The save action has been renamed to save-hex in the combined save/load button
