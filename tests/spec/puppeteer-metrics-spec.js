@@ -47,14 +47,21 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         });
     };
 
+    let preparePageForMetrics = async (metrics) => {
+        const page = await browser.newPage();
+        await addRequestIntercept(page, metrics);
+        await page.goto(editorURL);
+        return page;
+    };
+
     /* Helper function to wait until all metric pings have been requested. */
     let waitForAllRequests = async (page, metrics) => {
         const waitStepMs = 10;
-        const waitEndMs = 1000;
+        const waitEndMs = 3000;
         for (let ms = 0; ms < waitEndMs; ms += waitStepMs) {
             let allMetricsRequested = true;
             for (let metric in metrics) {
-                if (metrics[metric].requested !== false) {
+                if (metrics[metric].requested === false) {
                     allMetricsRequested = false;
                 }
             }
@@ -63,7 +70,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     };
 
-    it('Sends a page load metric.', async function() {
+    it('Page load.', async function() {
         let metrics = {
             pageLoaded: {
                 slug: '/page-load',
@@ -83,7 +90,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     });
 
-    it('Sends click and program info metrics when the Download is clicked.', async function() {
+    it('Click Download button: Click, lines and files sent.', async function() {
         let metrics = {
             downloadButton: {
                 slug: '/action/download',
@@ -101,10 +108,8 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
                 requested: false,
             }
         };
-        const page = await browser.newPage();
-        await addRequestIntercept(page, metrics);
+        const page = await preparePageForMetrics(metrics);
 
-        await page.goto(editorURL);
         await page.click('#command-download');
         await waitForAllRequests(page, metrics);
         await page.close();
@@ -114,7 +119,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     });
 
-    it('Sends line range with default-script value when Download is clicked.', async function() {
+    it('Click Download button: Detect default-script.', async function() {
         let metrics = {
             codeLines: {
                 slug: '/lines/default-script',
@@ -122,10 +127,8 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
                 requested: false,
             },
         };
-        const page = await browser.newPage();
-        await addRequestIntercept(page, metrics);
+        const page = await preparePageForMetrics(metrics);
 
-        await page.goto(editorURL);
         await page.click('#command-download');
         await waitForAllRequests(page, metrics);
         await page.close();
@@ -135,7 +138,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     });
 
-    it('Sends line range when script is edited and Download is clicked.', async function() {
+    it('Click Download button: Number of lines.', async function() {
         let metrics = {
             codeLines: {
                 slug: '/lines/21-50',
@@ -143,10 +146,8 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
                 requested: false,
             },
         };
-        const page = await browser.newPage();
-        await addRequestIntercept(page, metrics);
+        const page = await preparePageForMetrics(metrics);
 
-        await page.goto(editorURL);
         await page.evaluate('EDITOR.setCode("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n# code\\n")');
         await page.click('#command-download');
         await waitForAllRequests(page, metrics);
@@ -156,4 +157,470 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
             expect(metrics[metric].requested).toBeTruthy();
         }
     });
+
+    it('Click Download button: Number of files.', async function() {
+        let metrics = {
+            hexFiles: {
+                slug: '/files/2',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click("#command-files");
+        const fileInput = await page.$("#fs-file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/samplefile.py");
+        await page.evaluate("$('div.vex-close').click()");
+        await page.waitForSelector('#load-drag-target', { hidden: true });
+        await page.click('#command-download');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Connect button.', async function() {
+        let metrics = {
+            connectButton: {
+                slug: '/action/connect',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-connect');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Load/Save button.', async function() {
+        let metrics = {
+            loadSaveButton: {
+                slug: '/action/files',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    // TODO: Drag and drop Python file to the load modal
+    // TODO: Drag and drop Hex file to the load modal
+    // TODO: Drag and drop invalid file to the load modal
+
+    it('Load/Save modal: Click Save Python button.', async function() {
+        let metrics = {
+            savePyButton: {
+                slug: '/action/save-py',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await page.waitForSelector('#load-drag-target', { visible: true });
+        await page.click('#save-py');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Load/Save modal: Click Save Hex button.', async function() {
+        let metrics = {
+            saveHexButton: {
+                slug: '/action/save-hex',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await page.waitForSelector('#load-drag-target', { visible: true });
+        await page.click('#save-hex');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Load/Save modal: Click file upload link and upload Python file.', async function() {
+        let metrics = {
+            fileUploadLink: {
+                slug: '/action/file-upload-link',
+                partial: false,
+                requested: false,
+            },
+            fileUploadPy: {
+                slug: '/file-upload/py',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await page.waitForSelector('#file-upload-link', { visible: true });
+        await page.click('#file-upload-link');
+        const fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/samplefile.py");
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Load/Save modal: Click file upload link and upload Hex file.', async function() {
+        let metrics = {
+            fileUploadLink: {
+                slug: '/action/file-upload-link',
+                partial: false,
+                requested: false,
+            },
+            fileUploadPy: {
+                slug: '/file-upload/hex',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await page.waitForSelector('#file-upload-link', { visible: true });
+        await page.click('#file-upload-link');
+        const fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/1.0.1.hex");
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    // TODO: Test file upload of invalid filetype
+    // TODO: Add filesystem file
+    // TODO: Download file from filesystem
+    // TODO: Delete file from filesystem
+
+    it('Click Snippets button.', async function() {
+        let metrics = {
+            snippetsButton: {
+                slug: '/action/snippet',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-snippet');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Snippets modal: Insert all snippets.', async function() {
+        let metrics = {
+            'snippet-docs': {
+                slug: '/action/snippet-docs', partial: false, requested: false,
+            },
+            'snippet-wh': {
+                slug: '/action/snippet-wh', partial: false, requested: false,
+            },
+            'snippet-with': {
+                slug: '/action/snippet-with', partial: false, requested: false,
+            },
+            'snippet-cl': {
+                slug: '/action/snippet-cl', partial: false, requested: false,
+            },
+            'snippet-def': {
+                slug: '/action/snippet-def', partial: false, requested: false,
+            },
+            'snippet-if': {
+                slug: '/action/snippet-if', partial: false, requested: false,
+            },
+            'snippet-ei': {
+                slug: '/action/snippet-ei', partial: false, requested: false,
+            },
+            'snippet-el': {
+                slug: '/action/snippet-el', partial: false, requested: false,
+            },
+            'snippet-for': {
+                slug: '/action/snippet-for', partial: false, requested: false,
+            },
+            'snippet-try': {
+                slug: '/action/snippet-try', partial: false, requested: false,
+            },
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        for (let metric in metrics) {
+            await page.click('#command-snippet');
+            await page.waitForSelector('#' + metric, { visible: true });
+            await page.click('#' + metric);
+        }
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Options button.', async function() {
+        let metrics = {
+            optionsButton: {
+                slug: '/action/options',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        const betaEditor = await page.evaluate('config.flags.experimental');
+        if (betaEditor) {
+            await page.click('#command-options');
+            await waitForAllRequests(page, metrics);
+            await page.close();
+        } else {
+            console.warn('Skipping Options button test in non-beta editor.')
+            await page.close();
+            return;
+        }
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Options menu: Click Autocomplete.', async function() {
+        let metrics = {
+            autocompleteSwitch: {
+                slug: '/action/menu-switch-autocomplete',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        const betaEditor = await page.evaluate('config.flags.experimental');
+        if (betaEditor) {
+            await page.click('#command-options');
+            //await page.waitForSelector('#menu-switch-autocomplete-label', { visible: true });
+            await page.click('#menu-switch-autocomplete-label');
+            await waitForAllRequests(page, metrics);
+            await page.close();
+        } else {
+            console.warn('Skipping Options button test in non-beta editor.')
+            await page.close();
+            return;
+        }
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Options menu: Click Autocomplete on Enter.', async function() {
+        let metrics = {
+            autocompleteEnterSwitch: {
+                slug: '/action/menu-switch-autocomplete-enter',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        const betaEditor = await page.evaluate('config.flags.experimental');
+        if (betaEditor) {
+            await page.click('#command-options');
+            //await page.waitForSelector('#menu-switch-autocomplete-enter-label', { visible: true });
+            await page.click('#menu-switch-autocomplete-enter-label');
+            await waitForAllRequests(page, metrics);
+            await page.close();
+        } else {
+            console.warn('Skipping Options button test in non-beta editor.')
+            await page.close();
+            return;
+        }
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Help button.', async function() {
+        let metrics = {
+            helpButton: {
+                slug: '/action/help',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-help');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Help menu: Click all (non-beta) links.', async function() {
+        let metrics = {
+            'docs-link': {
+                slug: '/action/docs-link',
+                partial: false,
+                requested: false,
+            },
+            'help-link': {
+                slug: '/action/help-link',
+                partial: false,
+                requested: false,
+            },
+            'support-link': {
+                slug: '/action/support-link',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        for (let metric in metrics) {
+            await page.click('#command-help');
+            //await page.waitForSelector('#' + metric, { visible: true });
+            await page.click('#' + metric);
+        }
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Help menu: Click all beta links.', async function() {
+        let metrics = {
+            'feedback-link': {
+                slug: '/action/feedback-link',
+                partial: false,
+                requested: false,
+            },
+            'issues-link': {
+                slug: '/action/issues-link',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        const betaEditor = await page.evaluate('config.flags.experimental');
+        if (betaEditor) {
+            for (let metric in metrics) {
+                await page.click('#command-help');
+                //await page.waitForSelector('#' + metric, { visible: true });
+                await page.click('#' + metric);
+            }
+            await waitForAllRequests(page, metrics);
+            await page.close();
+        } else {
+            console.warn('Skipping Help menu beta links test in non-beta editor.')
+            await page.close();
+            return;
+        }
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Zoom In button.', async function() {
+        let metrics = {
+            zommInButton: {
+                slug: '/action/zoom-in',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-zoom-in');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Zoom Out button.', async function() {
+        let metrics = {
+            zommInButton: {
+                slug: '/action/zoom-out',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-zoom-out');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Script Name text input.', async function() {
+        let metrics = {
+            scriptNameInput: {
+                slug: '/action/script-box',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#script-box');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    // TODO: Drag and drop Python file to the code editor area
+    // TODO: Drag and drop Hex file to the code editor area
+    // TODO: Drag and drop invalid file  to the code editor area
 });

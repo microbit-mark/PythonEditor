@@ -407,13 +407,9 @@ Test Case: Autocomplete
 
 Test Case: Metrics are working
 ''''''''''''''''''''''''''''''
+This section only contains checks for the metrics not covered by CI testing.
 Check that the following actions send a metric ping:
 
-- [ ] When the page has been loaded
-- [ ] Click Download button
-    - One ping for clicking the button
-    - One ping indicating the script size in number of lines range
-    - One ping indicating the number of files in the file system
 - [ ] Click WebUSB Connect button
 - [ ] Click WebUSB Flash button
     - One ping indicating flashing
@@ -432,33 +428,13 @@ Check that the following actions send a metric ping:
     - The ping identifies the file type, so repeat:
         - Once for a Python file
         - Once for a Hex file
-- [ ] In the Load/Save modal, add a file via file dialog
-    - The ping identifies the file type, so repeat:
-        - Once for a Python file
-        - Once for a Hex file
-- [ ] In the Load/Save modal, click the "Download Hex" button
-    - One ping for clicking the button
-    - One ping indicating the script size in number of lines range
-    - One ping indicating the number of files in the file system
 - [ ] In the Load/Save modal, click on "Add file" button 
 - [ ] In the Load/Save modal, click on the download button from a file in the fs
 - [ ] In the Load/Save modal, click on the delete button from a file in the fs
-- [ ] Click Snippets button
-- [ ] In the Snippets modal, click on each individual snippets
-    - Each snippet should have it's own ping
-- [ ] Click Options button
-- [ ] In the Options menu, click on each of the menu entries
-    - Each entry in the Options menu should have it's own ping
-- [ ] Click Help button
-- [ ] In the Help menu, click on each of the menu entries
-    - Each entry in the Help menu should have it's own ping
-- [ ] Click Zoom-in button
-- [ ] Click Zoom-out button
 - [ ] Drag&drop a file in the code editor area
     - The ping identifies the file type, so repeat:
         - Once for a Python file
         - Once for a Hex file
-- [ ] Edit the Script Name
 
 
 Test results

@@ -125,7 +125,7 @@ $('#editor').on('drop', function (e) {
         sendMetric("/drop/hex");
         break;
       default:
-        sendMetric("/drop/invalid");
+        sendMetric("/drop/error/invalid");
     }
 });
 
@@ -142,7 +142,28 @@ document.addEventListener('load-drop', function (e) {
         sendMetric("/drop/hex");
         break;
       default:
-        sendMetric("/drop/invalid");
+        sendMetric("/drop/error/invalid");
+    }
+});
+
+// Uploading a file to the editor via Load/Save modal
+document.addEventListener('file-upload', function (e) {
+    var files = e.detail;
+    if (files.length === 1) {
+        var f = files[0];
+        var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
+        switch(ext[0]) {
+            case "py":
+              sendMetric("/file-upload/py");
+              break;
+            case "hex":
+              sendMetric("/file-upload/hex");
+              break;
+            default:
+              sendMetric("/file-upload/error/invalid");
+          }
+    } else {
+        sendMetric("/file-upload/error/multiple-files");
     }
 });
 
