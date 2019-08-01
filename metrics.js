@@ -4,13 +4,24 @@
 var defaultScript = "";
 
 window.addEventListener("load", function() {
-  sendMetric("/page-load");
-  // Capture the default script loaded in the editor
-  defaultScript = EDITOR.getCode();
+    sendMetric("/page-load");
+    // Capture the default script loaded in the editor
+    defaultScript = EDITOR.getCode();
+
+    attachActionListeners();
+    // Some buttons create modals that need the action listener to be attached
+    $("#command-files").on("click", attachActionListeners);
+    $("#command-snippet").on("click", attachActionListeners);
 });
+
+function attachActionListeners() {
+    $(".action").off("click", actionClickListener);
+    $(".action").on("click", actionClickListener);
+}
 
 function sendMetric(slug) {
     slug = slug.replace(/,/g, '-');
+    // console.log(slug);
     $.ajax({
         type: "GET",
         url: "https://metrics.microbit.org/pyeditor-" + EDITOR_VERSION + slug,
@@ -135,7 +146,7 @@ document.addEventListener('load-drop', function (e) {
     }
 });
 
-$(".action").click(function (e) {
+function actionClickListener(e) {
     var slug = "/action/" + $(e.target).closest(".action")[0].id;
     slug = slug.replace("command-", "");
 
@@ -145,19 +156,17 @@ $(".action").click(function (e) {
     else if (slug.match(/_remove/)) {
       slug = "/action/file-remove";
     }
-    // Note - The save action has been renamed to save-hex in the combined save/load button
+
     switch(slug) {
       case "/action/flash":
         trackflashingTime();
         /* Intentional fall-through */
       case "/action/download":
-      case "/action/save":
-      case "/action/save-hex":
-        trackLines();
         trackFiles();
+        trackLines();
         /* Intentional fall-through */
       default:
         sendMetric(slug);
         break;
     }
-});
+}
