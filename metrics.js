@@ -10,8 +10,15 @@ window.addEventListener("load", function() {
 
     attachActionListeners();
     // Some buttons create modals that need the action listener to be attached
-    $("#command-files").on("click", attachActionListeners);
     $("#command-snippet").on("click", attachActionListeners);
+    $("#command-files").on("click", function(e) {
+        attachActionListeners();
+        // Adding new files to the filesystem creates new nodes in the DOM
+        $("#fs-file-upload-input").on("change", function(event) {
+            // It takes some time for a file to upload and appear in the DOM
+            setTimeout(attachActionListeners, 1000);
+        });
+    });
 });
 
 function attachActionListeners() {
@@ -172,10 +179,10 @@ function actionClickListener(e) {
     slug = slug.replace("command-", "");
 
     if (slug.match(/_save/)) {
-      slug = "/action/file-save";
+      slug = "/action/fs-file-save";
     }
     else if (slug.match(/_remove/)) {
-      slug = "/action/file-remove";
+      slug = "/action/fs-file-remove";
     }
 
     switch(slug) {

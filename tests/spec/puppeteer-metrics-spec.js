@@ -1,6 +1,8 @@
 /* Puppeteer tests for the editor metrics. */
 const puppeteer = require('puppeteer');
 
+jest.setTimeout(60000);
+
 describe("Puppeteer basic tests for the Python Editor.", function() {
     'use strict';
 
@@ -283,7 +285,11 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
 
         await page.click('#command-files');
         await page.waitForSelector('#file-upload-link', { visible: true });
-        await page.click('#file-upload-link');
+        const [fileChooser] = await Promise.all([
+            page.waitForFileChooser(),
+            page.click('#file-upload-link')
+        ]);
+        await fileChooser.cancel();
         const fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/samplefile.py");
         await waitForAllRequests(page, metrics);
@@ -311,7 +317,11 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
 
         await page.click('#command-files');
         await page.waitForSelector('#file-upload-link', { visible: true });
-        await page.click('#file-upload-link');
+        const [fileChooser] = await Promise.all([
+            page.waitForFileChooser(),
+            page.click('#file-upload-link')
+        ]);
+        await fileChooser.cancel();
         const fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/1.0.1.hex");
         await waitForAllRequests(page, metrics);
@@ -322,10 +332,69 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     });
 
-    // TODO: Test file upload of invalid filetype
-    // TODO: Add filesystem file
-    // TODO: Download file from filesystem
-    // TODO: Delete file from filesystem
+    it('Load/Save modal: Click file upload link and upload invalid file.', async function() {
+        let metrics = {
+            fileUploadLink: {
+                slug: '/action/file-upload-link',
+                partial: false,
+                requested: false,
+            },
+            fileUploadPy: {
+                slug: '/file-upload/error/invalid',
+                partial: false,
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await page.waitForSelector('#file-upload-link', { visible: true });
+        const [fileChooser] = await Promise.all([
+            page.waitForFileChooser(),
+            page.click('#file-upload-link')
+        ]);
+        await fileChooser.cancel();
+        const fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/invalid.txt");
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Load/Save modal: Upload file to filesystem, download fs file, and delete fs file.', async function() {
+        let metrics = {
+            showHideFilesButton: { slug: '/action/hide-files', partial: false, requested: false },
+            fsFileUploadButton:  { slug: '/action/fs-file-upload-button', partial: false, requested: false },
+            fsFileSaveButton:    { slug: '/action/fs-file-save', partial: false, requested: false },
+            fsFileDeleteButton:  { slug: '/action/fs-file-remove', partial: false, requested: false }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-files');
+        await page.waitForSelector('#show-files', { visible: true });
+        await page.click('#show-files');
+        await page.waitForSelector('#fs-file-upload-button', { visible: true });
+        await page.evaluate('$(".save-button.save")[0].click()');
+        const [fileChooser] = await Promise.all([
+            page.waitForFileChooser(),
+            page.click('#fs-file-upload-button'),
+        ]);
+        await fileChooser.cancel();
+        const fsFileInput = await page.$("#fs-file-upload-input");
+        await fsFileInput.uploadFile("./spec/test-files/samplefile.py");
+        // Metrics are for new files only added 1 sec after
+        await page.waitFor(1050);
+        await page.evaluate('$(".save-button.remove")[1].click()');
+        await waitForAllRequests(page, metrics);
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
 
     it('Click Snippets button.', async function() {
         let metrics = {
@@ -348,36 +417,16 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
 
     it('Snippets modal: Insert all snippets.', async function() {
         let metrics = {
-            'snippet-docs': {
-                slug: '/action/snippet-docs', partial: false, requested: false,
-            },
-            'snippet-wh': {
-                slug: '/action/snippet-wh', partial: false, requested: false,
-            },
-            'snippet-with': {
-                slug: '/action/snippet-with', partial: false, requested: false,
-            },
-            'snippet-cl': {
-                slug: '/action/snippet-cl', partial: false, requested: false,
-            },
-            'snippet-def': {
-                slug: '/action/snippet-def', partial: false, requested: false,
-            },
-            'snippet-if': {
-                slug: '/action/snippet-if', partial: false, requested: false,
-            },
-            'snippet-ei': {
-                slug: '/action/snippet-ei', partial: false, requested: false,
-            },
-            'snippet-el': {
-                slug: '/action/snippet-el', partial: false, requested: false,
-            },
-            'snippet-for': {
-                slug: '/action/snippet-for', partial: false, requested: false,
-            },
-            'snippet-try': {
-                slug: '/action/snippet-try', partial: false, requested: false,
-            },
+            'snippet-docs': { slug: '/action/snippet-docs', partial: false, requested: false },
+            'snippet-wh':   { slug: '/action/snippet-wh',   partial: false, requested: false },
+            'snippet-with': { slug: '/action/snippet-with', partial: false, requested: false },
+            'snippet-cl':   { slug: '/action/snippet-cl',   partial: false, requested: false },
+            'snippet-def':  { slug: '/action/snippet-def',  partial: false, requested: false },
+            'snippet-if':   { slug: '/action/snippet-if',   partial: false, requested: false },
+            'snippet-ei':   { slug: '/action/snippet-ei',   partial: false, requested: false },
+            'snippet-el':   { slug: '/action/snippet-el',   partial: false, requested: false },
+            'snippet-for':  { slug: '/action/snippet-for',  partial: false, requested: false },
+            'snippet-try':  { slug: '/action/snippet-try',  partial: false, requested: false },
         };
         const page = await preparePageForMetrics(metrics);
 

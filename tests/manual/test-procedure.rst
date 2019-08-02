@@ -428,13 +428,12 @@ Check that the following actions send a metric ping:
     - The ping identifies the file type, so repeat:
         - Once for a Python file
         - Once for a Hex file
-- [ ] In the Load/Save modal, click on "Add file" button 
-- [ ] In the Load/Save modal, click on the download button from a file in the fs
-- [ ] In the Load/Save modal, click on the delete button from a file in the fs
+        - Once for a different file (metric reports .../error/invalid)
 - [ ] Drag&drop a file in the code editor area
     - The ping identifies the file type, so repeat:
         - Once for a Python file
         - Once for a Hex file
+        - Once for a different file (metric reports .../error/invalid)
 
 
 Test results
