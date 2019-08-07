@@ -1,8 +1,6 @@
 /* Puppeteer tests for the editor metrics. */
 const puppeteer = require('puppeteer');
 
-jest.setTimeout(60000);
-
 describe("Puppeteer basic tests for the Python Editor.", function() {
     'use strict';
 
@@ -394,7 +392,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         for (let metric in metrics) {
             expect(metrics[metric].requested).toBeTruthy();
         }
-    });
+    }, 60 * 1000);
 
     it('Click Snippets button.', async function() {
         let metrics = {

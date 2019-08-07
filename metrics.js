@@ -28,14 +28,21 @@ function attachActionListeners() {
 
 function sendMetric(slug) {
     slug = slug.replace(/,/g, '-');
-    // console.log(slug);
-    $.ajax({
-        type: "GET",
-        url: "https://metrics.microbit.org/pyeditor-" + EDITOR_VERSION + slug,
-        complete: function(res) {
-            // Do nothing
-        }
-    });
+    // Do not send the metrics if running locally during development
+    if ((location.hostname === "localhost" || location.hostname === "127.0.0.1" ||
+            location.hostname === "") &&
+            // Check this is not Puppeteer, the tests need to intercept the sent requests
+            (typeof navigator !== "undefined" && !navigator.webdriver)) {
+        console.log("metric: " + slug);
+    } else {
+        $.ajax({
+            type: "GET",
+            url: "https://metrics.microbit.org/pyeditor-" + EDITOR_VERSION + slug,
+            complete: function(res) {
+                // Do nothing
+            }
+        });
+    }
 }
 
 function trackLines() {
