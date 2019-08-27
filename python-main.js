@@ -268,16 +268,33 @@ function blocks() {
  */
 function translations() {
     'use strict';
+    // These values must be valid language codes
+    // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
+    var validLangs = ['en', 'es', 'pl'];
 
     /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
         var elementId = 'lang';
-        document.getElementById(elementId).remove();
-        script('lang/' + newLang + '.js', elementId);
-        document.getElementById(elementId).onload = function() {
+        var newLangURL = 'lang/' + newLang + '.js';
+        var endsWithURL = new RegExp(newLangURL + "$");
+        var runCallback = function() {
             translateEmbedStrings(language);
             callback(language);
         };
+        if (endsWithURL.test(document.getElementById(elementId).src)) {
+            // The request newLang is the current one, don't reload js file
+            return runCallback(language);
+        }
+        // Check for a valid language
+        if (validLangs.indexOf(newLang) >- 1) {
+            document.getElementById(elementId).remove();
+            script(newLangURL, elementId);
+            document.getElementById(elementId).onload = runCallback;
+        } else {
+            // Don't throw an error, but inform the console
+            runCallback();
+            console.error('Requested language not available: ' + newLang);
+        }
     }
 
     /* Replaces the strings already loaded in the DOM, the rest are dynamically loaded. */
@@ -286,6 +303,7 @@ function translations() {
         $('.roundbutton').each(function(object, value) {
             var button_id = $(value).attr('id');
             $(value).attr('title', buttons[button_id]['title']);
+            $(value).attr('aria-label', buttons[button_id]['title']);
             $(value).children('.roundlabel').text(buttons[button_id]['label']);
             if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
                 // Serial button strings depend on the REPL being visible
@@ -293,6 +311,7 @@ function translations() {
                 $(value).children(':last').text(buttons[button_id]['label-close']);
             }
         });
+        $('.ace_text-input').attr('aria-label',language['static-strings']['text-editor']['aria-label']);
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
         $('#flashing-text').text(language['webusb']['flashing-text']);
@@ -312,8 +331,7 @@ function translations() {
     }
 
     return {
-        'updateLang': updateLang,
-        'translateEmbedStrings': translateEmbedStrings,
+        'updateLang': updateLang
     };
 }
 
@@ -408,6 +426,13 @@ function web_editor(config) {
         }
     }
 
+    function setLanguage(lang) {
+        TRANSLATIONS.updateLang(lang, function(translations) {
+            config.translate = translations;
+            document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
+        });
+    }
+
     // Checks for feature flags in the config object and shows/hides UI
     // elements as required.
     function setupFeatureFlags() {
@@ -494,10 +519,6 @@ function web_editor(config) {
         $("#script-name").on("input keyup blur", function () {
             dirty = true;
         });
-        // Handles what to do if the description is changed.
-        $("#script-description").on("input keyup blur", function () {
-            dirty = true;
-        });
         // Describes what to do if the user attempts to close the editor without first saving their work.
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
@@ -509,7 +530,7 @@ function web_editor(config) {
         // Bind the ESCAPE key.
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
-                $('#link-log').focus();
+                $('#command-download').focus();
             }
         });
         // Bind drag and drop into editor.
@@ -1359,9 +1380,7 @@ function web_editor(config) {
 
         $(".lang-choice").on("click", function() {
             $("#language_container").addClass('hidden');
-            TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
-                config.translate = translations;
-            });
+            setLanguage($(this).attr('id'));
         });
 
         $('#menu-switch-autocomplete').on('change', function() {
@@ -1425,7 +1444,7 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
-    TRANSLATIONS.translateEmbedStrings(config.translate);
+    setLanguage(qs.l || 'en');
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
