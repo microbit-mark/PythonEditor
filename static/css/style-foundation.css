@@ -71,3 +71,7 @@ input:checked + .menu-switch-slider {
 .save-button.hex:hover i {
   background-color: #febf2e;
 }
+
+#serial-buttons > div {
+    background-color: #3758ce;
+}
