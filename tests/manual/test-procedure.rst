@@ -411,6 +411,13 @@ This section only contains checks for the metrics not covered by CI testing.
 Check that the following actions send a metric ping:
 
 - [ ] Click WebUSB Connect button
+    - One ping indicating connect
+- [ ] Click WebUSB Connect button with micro:bit with non WebUSB DAPLink
+    - One ping indicating connect
+    - One ping indicating connection error: update-req
+- [ ] Click WebUSB Connect button with micro:bit connected to another WebUSB instance
+    - One ping indicating connect
+    - One ping indicating connection error: clear-connect
 - [ ] Click WebUSB Flash button
     - One ping indicating flashing
     - One ping indicating the script size in number of lines range
@@ -423,6 +430,8 @@ Check that the following actions send a metric ping:
     - One ping after disconnecting indicating an error
 - [ ] Click WebUSB Serial button
 - [ ] Click WebUSB Disconnect button
+- [ ] Unplug micro:bit without clicking WebUSB Disconnect button
+    - One ping indicating connection error: device-disconnected
 - [ ] Click Load/Save button
 - [ ] In the Load/Save modal, drag&drop a file into the grey area
     - The ping identifies the file type, so repeat:
