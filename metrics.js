@@ -90,42 +90,6 @@ function trackFiles() {
     }
 }
 
-// Records flashing times
-function trackflashingTime(){
-  var flashTime = 0;
-  var timeBracket = "error";
-  var flashing = setInterval(function(){
-    if ($("#flashing-overlay-error").html() !== "") {
-      // Error appeared
-      sendMetric("/flash-time/error");
-      clearInterval(flashing);
-    }
-    flashTime += 100;
-    if ($("#flashing-overlay-container").css("display") === "none") {
-      if (flashTime < 10000) {
-        timeBracket = "0-10";
-      }
-      else if (flashTime <= 20000) {
-        timeBracket = "10-20";
-      }
-      else if (flashTime <= 30000) {
-        timeBracket = "20-30";
-      }
-      else if (flashTime <= 60000) {
-        timeBracket = "30-60";
-      }
-      else if (flashTime <= 120000) {
-        timeBracket = "60-120";
-      }
-      else {
-        timeBracket = "120+";
-      }
-      sendMetric("/flash-time/" + timeBracket);
-      clearInterval(flashing);
-    }
-  }, 100);
-};
-
 // Dropping into editor
 $('#editor').on('drop', function (e) {
     var file = e.originalEvent.dataTransfer.files[0];
@@ -181,6 +145,52 @@ document.addEventListener('file-upload', function (e) {
     }
 });
 
+// WebUSB Error
+document.addEventListener('webusb', function (e) {
+    var details = e.detail;
+
+    // Put flash time into brackets
+    if( details["event-type"] == "flash-time" ) {
+
+        var flashTime = details["message"];
+        var timeBracket;
+
+        if (flashTime < 2000) {
+          timeBracket = "0-2";
+        }
+        else if (flashTime <= 4000) {
+          timeBracket = "2-4";
+        }
+        else if (flashTime <= 6000) {
+          timeBracket = "4-6";
+        }
+        else if (flashTime <= 10000) {
+          timeBracket = "6-10";
+        }
+        else if (flashTime <= 20000) {
+          timeBracket = "10-20";
+        }
+        else if (flashTime <= 30000) {
+          timeBracket = "20-30";
+        }
+        else if (flashTime <= 60000) {
+          timeBracket = "30-60";
+        }
+        else if (flashTime <= 120000) {
+          timeBracket = "60-120";
+        }
+        else {
+          timeBracket = "120+";
+        }
+
+        // Set message to time bracket
+        details["message"] = timeBracket;
+
+    } 
+
+    sendMetric('/webusb/' + details["flash-type"] + '/' + details["event-type"] + "/" + details["message"]);
+});
+
 function actionClickListener(e) {
     var slug = "/action/" + $(e.target).closest(".action")[0].id;
     slug = slug.replace("command-", "");
@@ -194,8 +204,6 @@ function actionClickListener(e) {
 
     switch(slug) {
       case "/action/flash":
-        trackflashingTime();
-        /* Intentional fall-through */
       case "/action/download":
         trackFiles();
         trackLines();
