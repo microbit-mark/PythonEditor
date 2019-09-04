@@ -75,3 +75,11 @@ input:checked + .menu-switch-slider {
 #serial-buttons > div {
     background-color: #3758ce;
 }
+
+#webusb-flashing-loader {
+  border-top: .2em solid #3758ce;
+}
+
+#webusb-flashing-complete {
+    color: #3758ce;
+}
