@@ -4,7 +4,7 @@ set -u
 set -o pipefail
 
 VERSION=$1
-NORMALISED_VERSION=$(echo ${VERSION} | sed -e "s/\./-/g" | sed -e "s/_/-/g")
+NORMALISED_VERSION=$(echo ${VERSION} | sed -e "s/\./-/g" | sed -e "s/_/-/g" | tr "[:upper:]" "[:lower:]")
 BUCKET="python-editor-${NORMALISED_VERSION}.microbit.org"
 
 aws configure set preview.cloudfront true
