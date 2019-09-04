@@ -42,7 +42,7 @@ var language = {
     'no_python': 'Could not find valid Python code in the hex file.',
     'no_script': 'Hex file does not contain a Python script.',
     'no_main': 'The hex file does not contain a main.py file.',
-    'cant_add_file': 'Could not add file to the system:',
+    'cant_add_file': 'Could not add file to the filesystem:',
     'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
     'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
   },
@@ -92,7 +92,9 @@ var language = {
       'clear-connect': 'Another process is connected to this device.<br>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
       'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
       'partial-flashing-disable': 'If the errors persist, try disabling partial flashing in the beta options.',
-      'device-disconnected': 'Device disconnected.'
+      'device-disconnected': 'Device disconnected.',
+      'unavailable': 'With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.',
+      'find-more': 'Find Out More'
     },
     'close': 'Close',
     'request-repl': 'Send CTRL-C for REPL',
