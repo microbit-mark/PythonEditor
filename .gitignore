@@ -17,3 +17,7 @@ dist/*
 
 # Node
 node_modules/
+
+# vscode
+.history
+.vscode/settings.json
