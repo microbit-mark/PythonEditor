@@ -5,6 +5,7 @@ var defaultScript = "";
 
 window.addEventListener("load", function() {
     sendMetric("/page-load");
+    measureViewport();
     // Capture the default script loaded in the editor
     defaultScript = EDITOR.getCode();
 
@@ -43,6 +44,18 @@ function sendMetric(slug) {
             }
         });
     }
+}
+
+function measureViewport(){
+  var  widthRange = [[0, 480], [481, 890], [891,1024], [1025, 1280], [1281, 10000]];
+  var viewportWidth = $(window).width();
+
+  var bucket = widthRange.filter(function(a) {
+    if (viewportWidth >= a[0] && viewportWidth <= a[1]) return a;
+  });
+
+  var slug = "/width/" + bucket[0].toString();
+  sendMetric(slug);
 }
 
 function trackLines() {

@@ -70,11 +70,16 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     };
 
-    it('Page load.', async function() {
+    it('Page load and viewport width.', async function() {
         let metrics = {
             pageLoaded: {
                 slug: '/page-load',
                 partial: false,
+                requested: false,
+            },
+            viewport: {
+                slug: '/width/',
+                partial: true,
                 requested: false,
             }
         };
