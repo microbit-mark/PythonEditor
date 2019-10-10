@@ -355,12 +355,20 @@ function translations() {
         }
         var helpStrings = language['help'];
         for (var object in helpStrings) {
-            if (object.match(/ver/)) {
-                $('#' + object).text(helpStrings[object]);
-                continue;
+            if (helpStrings.hasOwnProperty(object)) {
+                if (object.match(/ver/)) {
+                    $('#' + object).text(helpStrings[object]);
+                    continue;
+                }
+                $('#' + object).text(helpStrings[object]['label']);
+                $('#' + object).attr('title',helpStrings[object]['title']);
             }
-            $('#' + object).text(helpStrings[object]["label"]);
-            $('#' + object).attr("title",helpStrings[object]["title"]);
+        }
+        var languages = language['languages'];
+        for (var object in languages) {
+            if (languages.hasOwnProperty(object)) {
+                $('#' + object).attr('title',languages[object]['title']);
+            }
         }
     }
 
@@ -472,7 +480,7 @@ function web_editor(config) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
             document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
-            $('ul.tree > li > a').removeClass('is-selected');
+            $('ul.tree > li > span > a').removeClass('is-selected');
             $('#'+lang).addClass('is-selected'); 
         });
     }
@@ -915,6 +923,14 @@ function web_editor(config) {
         }
     }
 
+    function invalidFileWarning(fileType){
+        if(fileType=="mpy"){
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
+        }else{
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
+        }
+    }
+
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -1001,6 +1017,8 @@ function web_editor(config) {
                                 loadHex(f.name, e.target.result);
                             };
                             reader.readAsText(f);
+                        } else{
+                            invalidFileWarning(ext);
                         }
                     }
                     inputFile.value = '';
@@ -1170,6 +1188,8 @@ function web_editor(config) {
                 loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
+        }else{
+            invalidFileWarning(ext);
         }
         $('#editor').focus();
     }
@@ -1179,15 +1199,28 @@ function web_editor(config) {
         webusbErrorHandler(error);
     }
 
+    function clearDapWrapper(event) {
+        if(window.dapwrapper || window.previousDapWrapper) {
+            window.dapwrapper = null;
+            window.previousDapWrapper = null;
+        }
+    }
+
     function doConnect(serial) {
+        // Device disconnect listener
+        // Clears dapwrapper
+        navigator.usb.addEventListener('disconnect', clearDapWrapper);
+
         // Show error on WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', showDisconnectError);
 
         var p = Promise.resolve();
         if (usePartialFlashing) {
+            console.log("Connecting: Using Quick Flash");
             p = PartialFlashing.connectDapAsync();
         }
         else {
+            console.log("Connecting: Using Full Flash");
             p = navigator.usb.requestDevice({
                 filters: [{vendorId: 0x0d28, productId: 0x0204}]
             }).then(function(device) {
@@ -1202,6 +1235,9 @@ function web_editor(config) {
 
                 // Connect to board
                 return window.daplink.connect();
+            })
+            .then(() => {
+                console.log("Connection Complete");
             });
         }
 
@@ -1224,6 +1260,16 @@ function web_editor(config) {
     }
 
     function webusbErrorHandler(err) {
+        // Log error to console for feedback
+        console.log("An error occured whilst attempting to use WebUSB. Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
+        console.log(err);
+
+        // If there was an error clear dapwrapper
+        if(usePartialFlashing) {
+            window.dapwrapper = null;
+            window.previousDapWrapper = null;
+        }
+
         // Disconnect
         doDisconnect();
 
@@ -1316,16 +1362,23 @@ function web_editor(config) {
 
         if (usePartialFlashing) {
             if (window.dapwrapper) {
+                console.log("Disconnecting: Using Quick Flash");
                 p = p.then(function() { window.dapwrapper.daplink.stopSerialRead() } )
                     .then(function() { window.dapwrapper.disconnectAsync() } );
             }
         }
         else {
             if (window.daplink) {
+                console.log("Disconnecting: Using Full Flash");
                 p = p.then(function() { window.daplink.stopSerialRead() } )
                     .then(function() { window.daplink.disconnect() } );
             }
         }
+
+        p.finally(() => {
+            console.log("Disconnection Complete");
+        });
+
         return p;
     }
 
@@ -1379,6 +1432,7 @@ function web_editor(config) {
         }
         else {
             // Push binary to board
+            console.log("Starting Full Flash");
             p = window.daplink.connect()
                 .then(function() {
                     // Event to monitor flashing progress
@@ -1407,6 +1461,8 @@ function web_editor(config) {
             var timeTaken = (new Date().getTime() - startTime);
             var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+
+            console.log("Flash complete");
             
             // Close overview
             setTimeout(function(){
@@ -1417,10 +1473,17 @@ function web_editor(config) {
         .finally(function() {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
+            
+        })
+        .catch(webusbErrorHandler)
+        .finally(function() {
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         });
     }
 
     function doSerial() {
+        console.log("Setting Up Serial Terminal");
         // Hide terminal
         var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
         if ($("#repl").css('display') != 'none') {
@@ -1511,8 +1574,8 @@ function web_editor(config) {
         $(overlayContainer).css("display","block");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
+        var modalLinks = [];
         if (links) {
-            var modalLinks = [];
             Object.keys(links).forEach(function(key) {
                 if (links[key] === "close") {
                     modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
@@ -1520,8 +1583,8 @@ function web_editor(config) {
                     modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
             });
-            $("#modal-msg-links").html((modalLinks).join(' | '));
         }
+        $("#modal-msg-links").html((modalLinks).join(' | '));
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
