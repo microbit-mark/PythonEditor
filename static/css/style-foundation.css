@@ -61,6 +61,7 @@ input:checked + .menu-switch-slider {
 
 #small-icons .status-icon {
   color: #3758ce;
+  border-color: #febf2e;
 }
 
 .save-button.hex {
