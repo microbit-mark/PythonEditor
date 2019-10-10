@@ -113,13 +113,15 @@ result annotated.
 Please note that there are different ways to load files to the Python Editor
 and that different Test Cases will use different methods.
 
-Test Case: Hex file can be generated 
+
+Test Case: Hex file can be generated
 ''''''''''''''''''''''''''''''''''''
 - Click the "Download" button.
 - [ ] Confirm the file downloaded is named "microbit_program.hex".
 - Program by any method the downloaded hex file into a micro:bit.
 - [ ] Confirm the micro:bit displays "Hello, World!" followed by a heart.
 - Save this hex file for the following test case.
+
 
 Test Case: Generated hex file can be loaded to the editor
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
