@@ -205,7 +205,13 @@ document.addEventListener('webusb', function (e) {
 });
 
 function actionClickListener(e) {
-    var slug = "/action/" + $(e.target).closest(".action")[0].id;
+    var slug;
+    if(e.target) {
+        slug = "/action/" + $(e.target).closest(".action")[0].id;
+    } else {
+        slug = "/action/";
+    }
+
     slug = slug.replace("command-", "");
 
     if (slug.match(/_save/)) {
@@ -213,6 +219,12 @@ function actionClickListener(e) {
     }
     else if (slug.match(/_remove/)) {
       slug = "/action/fs-file-remove";
+    }
+    else if (slug.match(/flashing-overlay-download/)) {
+      slug = "/action/partial-flashing/error-link-download";
+    }
+    else if (slug.match(/flashing-overlay-troubleshoot/)) {
+      slug = "/action/partial-flashing/error-link-troubleshoot";
     }
 
     switch(slug) {
