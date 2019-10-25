@@ -426,9 +426,9 @@ Check that the following actions send a metric ping:
 - [ ] Click WebUSB Connect button with micro:bit with non WebUSB DAPLink
     - One ping indicating connect
     - One ping indicating connection error: update-req
-- [ ] Click WebUSB Connect button with micro:bit connected to another WebUSB instance
+- [ ] Click WebUSB Connect button with micro:bit connected to https://makecode.microbit.org/#
     - One ping indicating connect
-    - One ping indicating connection error: clear-connect
+    - One ping indicating connection error: clear-connect/unable-to-claim-interface
 - [ ] Click WebUSB Flash button
     - One ping indicating flashing
     - One ping indicating the script size in number of lines range
