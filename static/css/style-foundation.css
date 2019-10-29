@@ -29,6 +29,16 @@
   color: #3758ce;
 }
 
+.loader-background {
+  border-color: #ccd4f2;
+}
+
+.loader {
+  border-color: transparent;
+  background-color: transparent;
+  border-top: 6px solid #febf2e !important;
+}
+
 .snippet-selection:hover {
   background: #febf2e;
 }
