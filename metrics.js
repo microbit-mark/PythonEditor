@@ -103,6 +103,18 @@ function trackFiles() {
     sendEvent('files', label , 1);
 }
 
+function trackFsSize() {
+    var range = [[0, 5], [6, 10], [11, 15], [16, 20], [21, 25], [26, 30], [30, 1000]];
+    var fsUsed = micropythonFs.getStorageUsed() / 1024;
+
+    var bucket = range.filter(function(a) {
+        if (fsUsed >= a[0] && fsUsed <= a[1]) return a;
+    });
+    var label = bucket.toString().replace(/,/g, '-');
+
+    sendEvent('fs-used', label , 1);
+}
+
 /**
  * Returns an analytics label for the file extension.
  * "none" is used when there is no extension.
@@ -221,6 +233,7 @@ function actionClickListener(e) {
       case "flash":
       case "download":
         trackFiles();
+        trackFsSize();
         trackLines();
         /* Intentional fall-through */
       default:

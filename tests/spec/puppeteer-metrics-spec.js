@@ -115,7 +115,26 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
             },
         };
         const page = await preparePageForMetrics(metrics);
-        await page.evaluate('EDITOR.setCode("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n# code\\n")');
+        await page.evaluate('EDITOR.setCode("#first line' + '\\n'.repeat(21) + '#last line");');
+        await page.click('#command-download');
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
+    it('Click Download button: Filesystem storage used.', async function() {
+        let metrics = {
+            codeLines: {
+                action: 'fs-used',
+                label: '11-15',
+                value: '1',
+                requested: false,
+            },
+        };
+        const page = await preparePageForMetrics(metrics);
+        await page.evaluate('EDITOR.setCode("' + 'x'.repeat(11*1024) + '");');
         await page.click('#command-download');
         await page.close();
 
