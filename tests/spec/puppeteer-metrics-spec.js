@@ -618,6 +618,105 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
             expect(metrics[metric].requested).toBeTruthy();
         }
     });
+    
+    it('Click language button.', async function() {
+        let metrics = {
+            language: {
+                action: 'click',
+                label: 'language',
+                value: '1',
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-language');
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+    
+    it('Click English button.', async function() {
+        let metrics = {
+            English: {
+                action: 'click',
+                label: 'en',
+                value: '1',
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-language');
+        await page.click('#en.action.lang-choice');
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+        
+    it('Click Spanish button.', async function() {
+        let metrics = {
+            Spanish: {
+                action: 'click',
+                label: 'es',
+                value: '1',
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-language');
+        await page.click('#es.action.lang-choice');
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+        
+    it('Click Polish button.', async function() {
+        let metrics = {
+            Polish: {
+                action: 'click',
+                label: 'pl',
+                value: '1',
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-language');
+        await page.click('#pl.action.lang-choice');
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+        
+    it('Click Croatian button.', async function() {
+        let metrics = {
+            Croatian: {
+                action: 'click',
+                label: 'hr',
+                value: '1',
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.click('#command-language');
+        await page.click('#hr.action.lang-choice');
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
 
     it('Click Script Name text input.', async function() {
         let metrics = {
