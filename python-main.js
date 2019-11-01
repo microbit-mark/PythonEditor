@@ -307,7 +307,7 @@ function translations() {
     'use strict';
     // These values must be valid language codes
     // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    var validLangs = ['en', 'es', 'pl'];
+    var validLangs = ['en', 'es', 'pl', 'hr'];
 
     /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
@@ -560,9 +560,14 @@ function web_editor(config) {
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit program");
+            setName('microbit program');
             // A sane default starting point for a new script.
-            EDITOR.setCode(config.translate.code.start);
+            EDITOR.setCode('# ' + config.translate.code.start + '\n' +
+                'from microbit import *\n\n\n' +
+                'while True:\n' +
+                '    display.scroll(\'Hello, World!\')\n' +
+                '    display.show(Image.HEART)\n' +
+                '    sleep(2000)\n');
         }
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
@@ -1314,7 +1319,7 @@ function web_editor(config) {
                 if (!err.message && err.promise && err.reason) {
                     err = err.reason;
                 }
-                
+
                 // Determine error type
                 if (err.message === "No valid interfaces found.") {
                     errorType = "update-req";
@@ -1329,6 +1334,10 @@ function web_editor(config) {
                     errorTitle = err.message;
                     // No additional message provided here, err.message is enough
                     errorDescription = "";
+                } else if (err.name === "timeout-error") {
+                    errorType = "timeout-error";
+                    errorTitle = "Connection Timed Out";
+                    errorDescription = config["translate"]["webusb"]["err"]["reconnect-microbit"];
                 } else {
                     // Unhandled error. User will need to reconnect their micro:bit
                     errorType = "reconnect-microbit";
@@ -1470,7 +1479,7 @@ function web_editor(config) {
 
     function doFlash() {
         var startTime = new Date().getTime();
-        
+
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1490,7 +1499,12 @@ function web_editor(config) {
             }
         }
 
-        var p = Promise.resolve();
+        // Get the hex to flash in bytes format, exit if there is an error
+        try {
+            var output = generateFullHex('bytes');
+        } catch(e) {
+            return alert(config.translate.alerts.error + e.message);
+        }
 
         $("#webusb-flashing-progress").val(0).hide();
         $("#webusb-flashing-complete").hide();
@@ -1499,6 +1513,16 @@ function web_editor(config) {
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
 
+        var connectTimeout = setTimeout(function() {
+            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["timeout-error"]};
+            webusbErrorHandler(error);
+        }, 10000);
+
+        var updateProgress = function(progress) {
+            $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
+        };
+
+        var p = Promise.resolve();
         if (usePartialFlashing) {
             REPL = null;
             $("#repl").empty();
@@ -1508,32 +1532,30 @@ function web_editor(config) {
                     return PartialFlashing.connectDapAsync();
                 })
                 .then(function() {
-                    var output = generateFullHex("bytes");
-                    var updateProgress = function(progress) {
-                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-                    }
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
+                    // Begin flashing
                     $("#webusb-flashing-loader").hide();
                     $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
-                })
-
+                });
         }
         else {
             // Push binary to board
             console.log("Starting Full Flash");
             p = window.daplink.connect()
                 .then(function() {
-                    // Event to monitor flashing progress
-                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-                    });
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
 
-                     var output = generateFullHex("string");
+                    // Event to monitor flashing progress
+                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
 
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
                     var image = enc.encode(output).buffer;
-                        
+
                     $("#webusb-flashing-loader").hide();
                     $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return window.daplink.flash(image);
@@ -1561,7 +1583,6 @@ function web_editor(config) {
         .finally(function() {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
-            
         });
     }
 

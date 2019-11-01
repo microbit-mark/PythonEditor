@@ -79,12 +79,7 @@ var language = {
     'download_py_multiple': 'This project contains multiple files that will not be saved using this format.\nWe recommend downloading the Hex file, which contains your entire project and can be loaded back into the editor.\n\n Are you sure you want to download the {{file_name}} file only?'
   },
   'code': {
-    'start': "# Add your Python code here. E.g.\n" +
-            "from microbit import *\n\n\n" +
-            "while True:\n" +
-            "    display.scroll('Hello, World!')\n" +
-            "    display.show(Image.HEART)\n" +
-            "    sleep(2000)\n"
+    'start': "Add your Python code here. E.g."
   },
   'webusb': {
     'err': {
@@ -93,6 +88,7 @@ var language = {
       'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
       'partial-flashing-disable': 'If the errors persist, try disabling Quick Flash in the beta options.',
       'device-disconnected': 'Device disconnected.',
+      'timeout-error': 'Unable to connect to the micro:bit',
       'unavailable': 'With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.',
       'find-more': 'Find Out More'
     },
@@ -137,6 +133,9 @@ var language = {
     },
     'pl': {
       'title': 'Polish'
+    },
+    'hr': {
+      'title': 'Croatian'
     }
   },
   'static-strings': {

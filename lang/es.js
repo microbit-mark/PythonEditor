@@ -79,7 +79,7 @@ var language = {
     "download_py_multiple": "Este proyecto contiene varios archivos que no se guardarán con este formato.\nRecomendamos descargar el archivo Hex, que contiene todo el proyecto y puede volver a cargarse en el editor.\n\n¿Estas seguro que quieres descargar el {{file_name}} archivo solo?"
   },
   "code": {
-    "start": "# Añade tu código Python aquí. Por ejemplo,\n\n \n"
+    "start": "Añade tu código Python aquí. Por ejemplo,"
   },
   "webusb": {
     "err": {
@@ -88,6 +88,7 @@ var language = {
       "reconnect-microbit": "Por favor reconecta el micro:bit e intentalo de nuevo.",
       "partial-flashing-disable": "Si el error persiste, intenta deshabilitar el flasheo rapido en las opciones beta.",
       "device-disconnected": "Dispositivo desconectado.",
+      "timeout-error": "Unable to connect to the micro:bit",
       "unavailable": "Con WebUSB puedes programar tu micro: bit y conectarte a la consola de serie directamente desde el Editor de Python.<br/>Desafortunadamente, WebUSB no es compatible con este navegador. Recomendamos Chrome o un navegador basado en Chrome para usar WebUSB.",
       "find-more": "Saber más"
     },
@@ -132,6 +133,9 @@ var language = {
     },
     "pl": {
       "title": "Polaco"
+    },
+    "hr": {
+      "title": "Croatian"
     }
   },
   "static-strings": {
@@ -162,9 +166,9 @@ var language = {
         "title": "Conéctea al micro:bit",
         "label": "Conectar"
       },
-      'command-connecting': {
-        'title': 'Connecting to the micro:bit',
-        'label': 'Connecting'
+      "command-connecting": {
+        "title": "Connecting to the micro:bit",
+        "label": "Connecting"
       },
       "command-options": {
         "title": "Cambie la configuración del editor",
