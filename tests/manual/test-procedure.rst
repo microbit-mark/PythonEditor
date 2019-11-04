@@ -29,8 +29,8 @@ Nomenclature and Definitions
   open it".
 
 - **Load by file picker**: Load a file into the Python Editor by clicking on
-  the "Load/Save button", then clicking on the "Or Browse for a file" button, selecting a file in the browser file picker, and
-  finally clicking on the "Open" button.
+  the "Load/Save button", then clicking on the "Or Browse for a file" button, selecting a 
+  file in the browser file picker, and finally clicking on the "Open" button.
 
 - **Load by any method**: Load a file into the Python Editor using either
   of the three options: "Load by editor drag&drop", "Load by drop area
@@ -339,7 +339,7 @@ Test Case: Hex file containing module can be loaded in the editor
     ``emoji-example.py (main.py)`` and ``emoji.py`` files.
 - [ ] Confirm that each .py file can be downloaded individually.
 - [ ] Confirm that the emoji.py file can be deleted.
-- Program the file by any method to the micro:bit.
+- Program the project by any method to the micro:bit.
 - [ ] Confirm that an exception is thrown in the micro:bit.
 
 
