@@ -43,6 +43,10 @@
   background: #febf2e;
 }
 
+.snippet-button:focus {
+  color: #febf2e;
+}
+
 #messagebar {
   background-color: #febf2e;
 }
@@ -74,6 +78,10 @@ input:checked + .menu-switch-slider {
   border-color: #febf2e;
 }
 
+.save-button:focus {
+  color: #febf2e;
+}
+
 .save-button.hex {
   background-color: #3758ce;
 }
@@ -81,6 +89,14 @@ input:checked + .menu-switch-slider {
 .save-button.hex:hover,
 .save-button.hex:hover i {
   background-color: #febf2e;
+}
+
+.save-button.hex:focus {
+  color: #febf2e;
+}
+
+.save-button.py:focus {
+  color: #febf2e;
 }
 
 #serial-buttons > div {
