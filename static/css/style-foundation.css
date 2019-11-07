@@ -44,7 +44,7 @@
 }
 
 .snippet-button:focus {
-  color: #febf2e;
+  box-shadow: 0px 0px 5px 3px #febf2e;
 }
 
 #messagebar {
@@ -79,7 +79,7 @@ input:checked + .menu-switch-slider {
 }
 
 .save-button:focus {
-  color: #febf2e;
+  box-shadow: 0px 0px 5px 3px #febf2e;
 }
 
 .save-button.hex {
@@ -92,11 +92,11 @@ input:checked + .menu-switch-slider {
 }
 
 .save-button.hex:focus {
-  color: #febf2e;
+  box-shadow: 0px 0px 5px 3px #febf2e;
 }
 
 .save-button.py:focus {
-  color: #febf2e;
+  box-shadow: 0px 0px 5px 3px #febf2e;
 }
 
 #serial-buttons > div {
