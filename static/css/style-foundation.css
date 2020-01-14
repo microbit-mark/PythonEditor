@@ -77,7 +77,7 @@ input:checked + .menu-switch-slider {
   background-color: #3758ce;
 }
 
-#small-icons .status-icon {
+.status-icon {
   color: #3758ce;
   border-color: #febf2e;
 }
