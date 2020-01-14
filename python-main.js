@@ -590,7 +590,12 @@ function web_editor(config) {
         // Bind the ESCAPE key.
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
-                $('#command-download').focus();
+                if ( $('#command-download').is(':visible') ) {
+                    $('#command-download').focus();
+                }
+                else if ( $('#command-flash').is(':visible') ){
+                    $('#command-flash').focus();
+                }
             }
         });
         // Bind drag and drop into editor.
@@ -1410,10 +1415,10 @@ function web_editor(config) {
         // If err is not device disconnected or if there is previous errors, append the download/troubleshoot buttons
         var showOverlayButtons = "";
         if(err.name !== 'device-disconnected' || $("#flashing-overlay-error").html() !== "") {
-            showOverlayButtons = '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
+            showOverlayButtons = '<a title="" href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
                                     config["translate"]["webusb"]["download"] + 
                                  '</a> | ' +
-                                 '<a target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
+                                 '<a title="" target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
                                     config["translate"]["webusb"]["troubleshoot"] + 
                                 '</a> | ';
         }
@@ -1428,7 +1433,7 @@ function web_editor(config) {
                     '<div class="flashing-overlay-buttons">' + 
                         '<hr />' +
                         showOverlayButtons + 
-                        '<a href="#" onclick="flashErrorClose()">' + config["translate"]["webusb"]["close"] + '</a>' + 
+                        '<a title="" href="#" onclick="flashErrorClose()">' + config["translate"]["webusb"]["close"] + '</a>' + 
                     '</div>';
 
         // Show error message, or append to existing errors
