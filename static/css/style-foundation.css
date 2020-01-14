@@ -66,6 +66,10 @@
   background: none;
 }
 
+.button-link {
+  color: #3758ce;
+}
+
 .menu-switch-slider:before {
   background-color: #febf2e;
 }
@@ -109,4 +113,12 @@ input:checked + .menu-switch-slider {
 
 #webusb-flashing-complete {
     color: #3758ce;
+}
+
+#modal-msg-title {
+  color:#3758ce;
+}
+
+.modal-close {
+  color:#3758ce;
 }
