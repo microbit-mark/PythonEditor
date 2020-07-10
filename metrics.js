@@ -90,7 +90,7 @@ function trackLines() {
 
 function trackFiles() {
     var range = [[11, 15], [16, 20], [21, 25], [26, 1000]];
-    var files = micropythonFs.ls().length;
+    var files = FS.ls().length;
 
     var label = files.toString();
     if (files > 10) {
@@ -105,7 +105,7 @@ function trackFiles() {
 
 function trackFsSize() {
     var range = [[0, 5], [6, 10], [11, 15], [16, 20], [21, 25], [26, 30], [30, 1000]];
-    var fsUsed = micropythonFs.getStorageUsed() / 1024;
+    var fsUsed = FS.getStorageUsed() / 1024;
 
     var bucket = range.filter(function(a) {
         if (fsUsed >= a[0] && fsUsed <= a[1]) return a;
