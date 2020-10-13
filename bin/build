@@ -34,7 +34,12 @@ for file in *.js; do
   cp "${SRC}/$file" "${DEST}"
 done
 
-for dir in ace blockly lang microbit_blocks static; do
+# All hex files in root directory will be needed
+for file in *.hex; do
+  cp "${SRC}/$file" "${DEST}"
+done
+
+for dir in ace blockly js lang microbit_blocks static; do
   cp -r "${SRC}/$dir" "${DEST}"
 done
 
