@@ -733,7 +733,7 @@ function web_editor(config) {
         try {
             FS.write(filename, fileBytes);
             // Check if the filesystem has run out of space
-            var _ = FS.getIntelHex();
+            var _ = FS.getUniversalHex();
         } catch(e) {
             if (FS.exists(filename)) {
                 FS.remove(filename);
@@ -1451,8 +1451,11 @@ function web_editor(config) {
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
+        // TODO: Translate this string
+        $('#flashing-extra-msg').text('Full flash in progress, subsequent flashes will be much quicker.').hide();
 
-        var updateProgress = function(progress) {
+        var updateProgress = function(progress, longFlash) {
+            $('#flashing-extra-msg').toggle(!!longFlash);
             $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
         };
 
