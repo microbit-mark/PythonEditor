@@ -506,15 +506,25 @@ This test will need a local clone of the repository version under test.
 Test Case: Metrics are working
 ''''''''''''''''''''''''''''''
 This section only contains checks for the metrics not covered by CI testing.
+This section of the checklist is exclusive to the editor hosted in
+microbit-foundation/python-editor, and the rest of the checklist should be
+identical to the upstream (bbcmicrobit/PythonEditor) version.
+
+To see the metric pings clone this repository, serve the contents, and visit
+the editor.html page via localhost. The pings will not be sent to GAnalytics
+and instead will be printed in the developer tools js console.
+
 Check that the following actions send a metric ping:
 
-- [ ] Click WebUSB Connect button
+- [ ] Click WebUSB Connect button and connect to the micro:bit
     - One ping indicating connect
+    - One ping indicating the board ID
 - [ ] Click WebUSB Connect button with micro:bit with non WebUSB DAPLink
     - One ping indicating connect
     - One ping indicating connection error: update-req
 - [ ] Click WebUSB Connect button with micro:bit connected to https://makecode.microbit.org/#
     - One ping indicating connect
+    - One ping indicating the board ID
     - One ping indicating connection error: clear-connect/unable-to-claim-interface
 - [ ] Click WebUSB Flash button
     - One ping indicating flashing
