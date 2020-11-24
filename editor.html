@@ -27,20 +27,16 @@ WELL DONE!
 
 You've found the source! :-)
 
-If you want to see how the editor works you should check out the python-main.js file - it has all sorts of
-helpful comments for you so you'll be able to work it all out.
+If you want to see how the editor works you should check out the js/python-main.js file - it has all
+sorts of helpful comments for you so you'll be able to work it all out.
 
-If you're wondering what the long string of random looking characters is at the end of this file, well, it's
-a copy of the MicroPython runtime that we copy onto the micro:bit. When you click download, the code you've
-written in the editor is similarly encoded and then inserted at the end where you see a line of ::::::::::::
-characters.
+If you want to know more about this Python Editor visit:
+https://github.com/bbcmicrobit/PythonEditor
 
 If you want to know more about Python visit:
-
 http://python.org/
 
 If you want to know more about MicroPython (the version of Python we're using here), then visit:
-
 http://micropython.org/
 
 Finally, remember the Zen of MicroPython:
@@ -91,15 +87,13 @@ Nicholas and Damien.
         <script type="application/javascript">
             if (navigator.appVersion.indexOf("MSIE 9") !== -1 || navigator.appVersion.indexOf("MSIE 8") !== -1 || navigator.appVersion.indexOf("MSIE 7") !== -1)
             {
-                document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 10 or greater.</a>');
+                document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 11 or a Chrome based browser</a>');
                 document.execCommand('Stop');
             }
-        </script>
-        <script type="application/javascript">
             // VERSION INFORMATION
-            EDITOR_VERSION = "2.1.0-beta.7";
+            EDITOR_VERSION = "2.1.0";
             UPY_1_VERSION = "1.0.1";
-            UPY_2_VERSION = "2.0-44a75bb";
+            UPY_2_VERSION = "2.0.0-beta.1";
         </script>
         <script id="files-template" type="x-tmpl-mustache">
           <div id="files-modal" tabindex="-1" role="dialog" aria-label="load/save modal" aria-modal="true" class="modal-div">
@@ -454,19 +448,18 @@ Nicholas and Damien.
         <script src="static/js/custom-event-polyfill.js"></script>
         <script src="static/js/lzma-d.min.js"></script>
         <script src="static/js/base64.js"></script>
-        <script src="static/js/microbit-fs.umd.js"></script>
-        <script src="static/js/microbit-uh.umd.js"></script>
+        <script src="static/js/microbit-fs.umd.min.js"></script>
         <script src="lang/en.js" id="lang"></script>
         <script src="js/micropythonapi.js"></script>
         <script src="js/urlparser.js"></script>
         <script src="js/fs.js"></script>
         <script src="js/metrics.js"></script>
-        <script src="python-main.js"></script>
+        <script src="js/python-main.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script>
             // Call the web_editor function to start the editor running.
             var config = {
-                translate: language,
+                translate: LANGUAGE,
                 flags: {
                     blocks: false,
                     snippets: true,
@@ -477,335 +470,5 @@ Nicholas and Damien.
             web_editor(config);
         </script>
         </main>
-<xml id="blockly-toolbox" style="display: none">
-  <category name="Accelerometer" colour="0">
-    <block type="microbit_accelerometer_get_x"></block>
-    <block type="microbit_accelerometer_get_y"></block>
-    <block type="microbit_accelerometer_get_z"></block>
-    <block type="microbit_accelerometer_was_gesture"></block>
-    <block type="microbit_accelerometer_is_gesture"></block>
-    <block type="microbit_accelerometer_get_gestures"></block>
-    <block type="microbit_accelerometer_current_gesture"></block>
-  </category>
-  <category name="Buttons" colour="32">
-    <block type="microbit_button_is_pressed"></block>
-    <block type="microbit_button_was_pressed"></block>
-    <block type="microbit_button_get_presses"></block>
-  </category>
-  <category name="Compass" colour="64">
-    <block type="microbit_compass_calibrate"></block>
-    <block type="microbit_compass_is_calibrated"></block>
-    <block type="microbit_compass_heading"></block>
-    <block type="microbit_compass_get_field_strength"></block>
-  </category>
-  <category name="Display" colour="96">
-    <block type="microbit_display_get_pixel"><value name="x"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="y"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
-    <block type="microbit_display_set_pixel"><value name="x"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="y"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="value"><shadow type="math_number"><field name="NUM">9</field></shadow></value></block>
-    <block type="microbit_display_clear"></block>
-    <block type="microbit_display_show_image"></block>
-    <block type="microbit_display_show_animation"></block>
-    <block type="microbit_display_scroll"><value name="message"><shadow type="text"><field name="TEXT">Hello, World!</field></shadow></value></block>
-    <block type="microbit_display_on"></block>
-    <block type="microbit_display_off"></block>
-    <block type="microbit_display_is_on"></block>
-  </category>
-  <category name="Image" colour="128">
-    <block type="microbit_image_builtins"></block>
-    <block type="microbit_image_copy"></block>
-    <block type="microbit_image_invert"></block>
-    <block type="microbit_image_create"></block>
-  </category>
-  <category name="Microbit" colour="160">
-    <block type="microbit_microbit_panic"></block>
-    <block type="microbit_microbit_reset"></block>
-    <block type="microbit_microbit_sleep"><value name="duration"><shadow type="math_number"><field name="NUM">1000</field></shadow></value></block>
-    <block type="microbit_microbit_running_time"></block>
-    <block type="microbit_microbit_temperature"></block>
-  </category>
-  <category name="Music" colour="192">
-    <block type="microbit_music_play_built_in"></block>
-    <block type="microbit_music_pitch"></block>
-    <block type="microbit_music_play_list_of_notes"></block>
-    <block type="microbit_music_reset"></block>
-    <block type="microbit_music_stop"></block>
-    <block type="microbit_music_set_tempo"><value name="ticks"><shadow type="math_number"><field name="NUM">4</field></shadow></value><value name="bpm"><shadow type="math_number"><field name="NUM">120</field></shadow></value></block>
-    <block type="microbit_music_get_tempo"></block>
-  </category>
-  <category name="Neopixel" colour="224">
-    <block type="microbit_neopixel_initialise"></block>
-    <block type="microbit_neopixel_clear"></block>
-    <block type="microbit_neopixel_show"></block>
-    <block type="microbit_neopixel_set"><value name="pixel"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="red"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="green"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="blue"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
-  </category>
-  <category name="Pins" colour="256">
-    <block type="microbit_pin_touched"></block>
-    <block type="microbit_pin_read_analog"></block>
-    <block type="microbit_pin_write_analog"><value name="output"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
-    <block type="microbit_pin_read_digital"></block>
-    <block type="microbit_pin_write_digital"><value name="output"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
-  </category>
-  <category name="Radio" colour="288">
-    <block type="microbit_radio_on"></block>
-    <block type="microbit_radio_off"></block>
-    <block type="microbit_radio_config"></block>
-    <block type="microbit_radio_reset"></block>
-    <block type="microbit_radio_send_string"><value name="message"><shadow type="text"><field name="TEXT">Some text</field></shadow></value></block>
-    <block type="microbit_radio_receive"></block>
-  </category>
-  <category name="Speech" colour="320">
-    <block type="microbit_speech_say"><value name="english"><shadow type="text"><field name="TEXT">Exterminate!</field></shadow></value></block>
-    <block type="microbit_speech_pronounce"><value name="phonemes"><shadow type="text"><field name="TEXT">/HEH5EH4EH3EH2EH2EH3EH4EH5EHLP.</field></shadow></value></block>
-    <block type="microbit_speech_sing"><value name="song"><shadow type="text"><field name="TEXT">#115DOWWWW</field></shadow></value></block>
-  </category>
-	    <sep></sep>
-	    <category name="Logic" colour="210">
-	      <block type="controls_if"></block>
-	      <block type="logic_compare"></block>
-	      <block type="logic_operation"></block>
-	      <block type="logic_negate"></block>
-	      <block type="logic_boolean"></block>
-	      <block type="logic_null"></block>
-	      <block type="logic_ternary"></block>
-	    </category>
-	    <category name="Loops" colour="120">
-	      <block type="controls_repeat_ext">
-		<value name="TIMES">
-		  <shadow type="math_number">
-		    <field name="NUM">10</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="controls_whileUntil"></block>
-	      <block type="controls_for">
-		<value name="FROM">
-		  <shadow type="math_number">
-		    <field name="NUM">1</field>
-		  </shadow>
-		</value>
-		<value name="TO">
-		  <shadow type="math_number">
-		    <field name="NUM">10</field>
-		  </shadow>
-		</value>
-		<value name="BY">
-		  <shadow type="math_number">
-		    <field name="NUM">1</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="controls_forEach"></block>
-	      <block type="controls_flow_statements"></block>
-	    </category>
-	    <category name="Math" colour="230">
-	      <block type="math_number" gap="32"></block>
-	      <block type="math_arithmetic">
-		<value name="A">
-		  <shadow type="math_number">
-		    <field name="NUM">1</field>
-		  </shadow>
-		</value>
-		<value name="B">
-		  <shadow type="math_number">
-		    <field name="NUM">1</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_single">
-		<value name="NUM">
-		  <shadow type="math_number">
-		    <field name="NUM">9</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_trig">
-		<value name="NUM">
-		  <shadow type="math_number">
-		    <field name="NUM">45</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_constant"></block>
-	      <block type="math_number_property">
-		<value name="NUMBER_TO_CHECK">
-		  <shadow type="math_number">
-		    <field name="NUM">0</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_round">
-		<value name="NUM">
-		  <shadow type="math_number">
-		    <field name="NUM">3.1</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_on_list"></block>
-	      <block type="math_modulo">
-		<value name="DIVIDEND">
-		  <shadow type="math_number">
-		    <field name="NUM">64</field>
-		  </shadow>
-		</value>
-		<value name="DIVISOR">
-		  <shadow type="math_number">
-		    <field name="NUM">10</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_constrain">
-		<value name="VALUE">
-		  <shadow type="math_number">
-		    <field name="NUM">50</field>
-		  </shadow>
-		</value>
-		<value name="LOW">
-		  <shadow type="math_number">
-		    <field name="NUM">1</field>
-		  </shadow>
-		</value>
-		<value name="HIGH">
-		  <shadow type="math_number">
-		    <field name="NUM">100</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_random_int">
-		<value name="FROM">
-		  <shadow type="math_number">
-		    <field name="NUM">1</field>
-		  </shadow>
-		</value>
-		<value name="TO">
-		  <shadow type="math_number">
-		    <field name="NUM">100</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="math_random_float"></block>
-	    </category>
-	    <category name="Text" colour="160">
-	      <block type="text"></block>
-	      <block type="text_join"></block>
-	      <block type="text_append">
-		<value name="TEXT">
-		  <shadow type="text"></shadow>
-		</value>
-	      </block>
-	      <block type="text_length">
-		<value name="VALUE">
-		  <shadow type="text">
-		    <field name="TEXT">abc</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="text_isEmpty">
-		<value name="VALUE">
-		  <shadow type="text">
-		    <field name="TEXT"></field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="text_indexOf">
-		<value name="VALUE">
-		  <block type="variables_get">
-		    <field name="VAR">text</field>
-		  </block>
-		</value>
-		<value name="FIND">
-		  <shadow type="text">
-		    <field name="TEXT">abc</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="text_charAt">
-		<value name="VALUE">
-		  <block type="variables_get">
-		    <field name="VAR">text</field>
-		  </block>
-		</value>
-	      </block>
-	      <block type="text_getSubstring">
-		<value name="STRING">
-		  <block type="variables_get">
-		    <field name="VAR">text</field>
-		  </block>
-		</value>
-	      </block>
-	      <block type="text_changeCase">
-		<value name="TEXT">
-		  <shadow type="text">
-		    <field name="TEXT">abc</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="text_trim">
-		<value name="TEXT">
-		  <shadow type="text">
-		    <field name="TEXT">abc</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="text_print">
-		<value name="TEXT">
-		  <shadow type="text">
-		    <field name="TEXT">abc</field>
-		  </shadow>
-		</value>
-	      </block>
-	    </category>
-	    <category name="Lists" colour="260">
-	      <block type="lists_create_with">
-		<mutation items="0"></mutation>
-	      </block>
-	      <block type="lists_create_with"></block>
-	      <block type="lists_repeat">
-		<value name="NUM">
-		  <shadow type="math_number">
-		    <field name="NUM">5</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="lists_length"></block>
-	      <block type="lists_isEmpty"></block>
-	      <block type="lists_indexOf">
-		<value name="VALUE">
-		  <block type="variables_get">
-		    <field name="VAR">list</field>
-		  </block>
-		</value>
-	      </block>
-	      <block type="lists_getIndex">
-		<value name="VALUE">
-		  <block type="variables_get">
-		    <field name="VAR">list</field>
-		  </block>
-		</value>
-	      </block>
-	      <block type="lists_setIndex">
-		<value name="LIST">
-		  <block type="variables_get">
-		    <field name="VAR">list</field>
-		  </block>
-		</value>
-	      </block>
-	      <block type="lists_getSublist">
-		<value name="LIST">
-		  <block type="variables_get">
-		    <field name="VAR">list</field>
-		  </block>
-		</value>
-	      </block>
-	      <block type="lists_split">
-		<value name="DELIM">
-		  <shadow type="text">
-		    <field name="TEXT">,</field>
-		  </shadow>
-		</value>
-	      </block>
-	      <block type="lists_sort"></block>
-	    </category>
-	    <sep></sep>
-	    <category name="Variables" colour="330" custom="VARIABLE"></category>
-	  </xml>
     </body>
 </html>
