@@ -29,11 +29,6 @@ for file in editor.html help.html; do
   cp "${SRC}/$file" "${DEST}"
 done
 
-# Assume all JavaScript files in the root directory are needed
-for file in *.js; do
-  cp "${SRC}/$file" "${DEST}"
-done
-
 # All files in these directories will be needed
 for dir in ace blockly js lang microbit_blocks micropython static; do
   cp -r "${SRC}/$dir" "${DEST}"
