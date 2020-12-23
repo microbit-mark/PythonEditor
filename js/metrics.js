@@ -5,6 +5,7 @@ var defaultScript = "";
 
 window.addEventListener("load", function() {
     measureViewport();
+    checkWebUSB();
     // Retained so we can compare with GA.
     sendLegacyPageViewMetric();
 
@@ -161,6 +162,15 @@ document.addEventListener('file-upload', function (e) {
         sendEvent('load', 'error-file-upload-multiple', 1);
     }
 });
+
+// Check if WebUSB is available in this browser
+function checkWebUSB() {
+    if (navigator.usb) {
+        sendEvent('WebUSB-info', 'available/yes', 1);
+    } else {
+        sendEvent('WebUSB-info', 'available/no', 1);
+    }
+}
 
 // WebUSB flash time and errors
 document.addEventListener('webusb', function (e) {

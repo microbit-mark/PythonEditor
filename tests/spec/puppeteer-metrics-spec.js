@@ -67,6 +67,24 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         }
     });
 
+    it('Prepare page: check WebUSB availability.', async function() {
+        let metrics = {
+            viewport: {
+                action: 'WebUSB-info',
+                label: 'available/yes',
+                value: '1',
+                requested: false,
+            }
+        };
+        const page = await preparePageForMetrics(metrics);
+
+        await page.close();
+
+        for (let metric in metrics) {
+            expect(metrics[metric].requested).toBeTruthy();
+        }
+    });
+
     it('Click Download button: Check download metric is sent.', async function() {
         let metrics = {
             downloadButton: {
